@@ -1,3 +1,6 @@
+# project-specific
+/src/java/connection.properties
+
 # netbeans
 nbproject/private/
 build/
