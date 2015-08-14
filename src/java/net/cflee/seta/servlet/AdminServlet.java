@@ -26,7 +26,7 @@ public class AdminServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
-        if (!user.getEmail().equals("admin")) {
+        if (user == null || !user.getEmail().equals("admin")) {
             response.sendRedirect("/");
             return;
         }

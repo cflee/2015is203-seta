@@ -28,7 +28,8 @@ public class LoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        if (session.getAttribute("user") != null) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
             response.sendRedirect("/");
             return;
         }
@@ -48,9 +49,10 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
         Connection conn = null;
 
-        if (session.getAttribute("user") != null) {
+        if (user != null) {
             response.sendRedirect("/");
             return;
         }
@@ -58,7 +60,6 @@ public class LoginServlet extends HttpServlet {
         try {
             String username = request.getParameter("username");
             String password = request.getParameter("password");
-            User user = null;
 
             try {
                 conn = ConnectionManager.getConnection();
