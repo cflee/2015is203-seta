@@ -10,5 +10,8 @@
         <p>
             <%= request.getAttribute("errorMessage")%>
         </p>
+        <p>
+            <a href="/">Back to root</a>
+        </p>
     </body>
 </html>
