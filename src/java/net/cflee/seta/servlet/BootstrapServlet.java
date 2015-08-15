@@ -59,8 +59,7 @@ public class BootstrapServlet extends HttpServlet {
         User user = (User) session.getAttribute("user");
 
         if (user == null || !user.getEmail().equals("admin")) {
-            response.getWriter().println("User is " + user);
-            //response.sendRedirect("/");
+            response.sendRedirect("/");
             return;
         }
 
