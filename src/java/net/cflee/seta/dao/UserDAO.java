@@ -75,7 +75,6 @@ public class UserDAO {
                 psmt.setString(5, user.getGender() + "");
                 psmt.setString(6, user.getSchool());
                 psmt.setInt(7, user.getYear());
-                System.out.println(user);
                 psmt.executeUpdate();
             }
         } finally {
