@@ -17,36 +17,8 @@ public class AppDAO {
             = "TRUNCATE TABLE app";
     private static final String INSERT
             = "INSERT INTO app VALUES(?,?,?)";
-    private static final String RETRIEVE
-            = "SELECT * FROM app "
-            + "WHERE app_id = ?";
     private static final String RETRIEVE_ALL_APP_IDS
             = "SELECT app_id FROM app";
-
-    /**
-     * To check if the location id is valid
-     *
-     * @param appId the specified location id
-     * @param conn connection to the database
-     * @return if true if the location id is valid, else return false
-     * @throws java.sql.SQLException
-     */
-    public static boolean isValidAppId(int appId, Connection conn) throws SQLException {
-        PreparedStatement psmt = null;
-        ResultSet rs = null;
-        try {
-            psmt = conn.prepareStatement(RETRIEVE);
-            psmt.setInt(1, appId);
-            rs = psmt.executeQuery();
-            while (rs.next()) {
-                //assume that any data populated would mean that the validation has passed
-                return true;
-            }
-        } finally {
-            ConnectionManager.close(null, psmt, rs);
-        }
-        return false;
-    }
 
     /**
      * Retrieve all the location ids

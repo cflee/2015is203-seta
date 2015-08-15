@@ -27,7 +27,6 @@ public class AppUpdateDAO {
             + "WHERE mac_address = ? "
             + "AND time_stamp = ? ";
     private static final String CLEAR_ROW_NUMBERS = "UPDATE app_update SET row_number = 0";
-    private static final String SELECT_ALL = "SELECT mac_address, app_id, time_stamp FROM app_update";
 
     /**
      * Check if a matching AppUpdate record exists. AppUpdate records * are a match if the mac address and timestamp

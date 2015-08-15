@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import net.cflee.seta.entity.LocationUpdate;
 import net.cflee.seta.utility.ConnectionManager;
@@ -28,7 +27,6 @@ public class LocationUpdateDAO {
             + "WHERE mac_address = ? "
             + "AND time_stamp = ? ";
     private static final String CLEAR_ROW_NUMBERS = "UPDATE location_update SET row_number = 0";
-    private static final String SELECT_ALL = "SELECT mac_address, location_id, time_stamp FROM location_update";
 
     /**
      * Check if a matching LocationUpdate record exists. LocationUpdate records are a match if the mac address and
@@ -137,34 +135,6 @@ public class LocationUpdateDAO {
         } finally {
             ConnectionManager.close(null, psmt, null);
         }
-    }
-
-    /**
-     * Retrieve the list of location updates
-     *
-     * @param conn connection to the database
-     * @return list of location updates
-     * @throws java.sql.SQLException
-     */
-    public static ArrayList<LocationUpdate> retrieveAll(Connection conn) throws SQLException {
-        PreparedStatement psmt = null;
-        ResultSet rs = null;
-        ArrayList<LocationUpdate> locationUpdateList = new ArrayList<LocationUpdate>();
-
-        try {
-            psmt = conn.prepareStatement(SELECT_ALL);
-            rs = psmt.executeQuery();
-            while (rs.next()) {
-                String macAddress = rs.getString(1);
-                Date timestamp = rs.getTimestamp(2);
-                int locationId = rs.getInt(3);
-                LocationUpdate locationUpdate = new LocationUpdate(macAddress, timestamp, locationId);
-                locationUpdateList.add(locationUpdate);
-            }
-        } finally {
-            ConnectionManager.close(null, psmt, rs);
-        }
-        return locationUpdateList;
     }
 
 }

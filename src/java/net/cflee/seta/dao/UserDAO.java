@@ -79,38 +79,6 @@ public class UserDAO {
     }
 
     /**
-     * Retrieve all users from the database
-     *
-     * @param conn connection to the database
-     * @return list of users
-     * @throws java.sql.SQLException
-     */
-    public static ArrayList<User> retrieveAll(Connection conn) throws SQLException {
-        PreparedStatement psmt = null;
-        ResultSet rs = null;
-        ArrayList<User> userList = new ArrayList<User>();
-
-        try {
-            psmt = conn.prepareStatement(SELECT_ALL);
-            rs = psmt.executeQuery();
-            while (rs.next()) {
-                String macAddress = rs.getString(1);
-                String name = rs.getString(2);
-                String password = rs.getString(3);
-                String email = rs.getString(4);
-                char gender = rs.getString(5).charAt(0);
-                String school = rs.getString(6);
-                int year = rs.getInt(7);
-                User user = new User(macAddress, name, password, email, gender, school, year);
-                userList.add(user);
-            }
-        } finally {
-            ConnectionManager.close(null, psmt, rs);
-        }
-        return userList;
-    }
-
-    /**
      * Drop user table in the database
      *
      * @param conn connection to the database
