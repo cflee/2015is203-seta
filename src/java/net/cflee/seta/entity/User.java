@@ -96,4 +96,18 @@ public class User {
     public int getYear() {
         return year;
     }
+
+    @Override
+    public String toString() {
+        return "User["
+                + "macAddress=" + macAddress
+                + ",name=" + name
+                + ",password=" + password
+                + ",email=" + email
+                + ",gender=" + gender
+                + ",school=" + school
+                + ",year=" + year
+                + "]";
+    }
+
 }

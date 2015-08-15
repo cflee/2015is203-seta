@@ -11,19 +11,10 @@ import net.cflee.seta.utility.ConnectionManager;
 
 public class UserDAO {
 
-    private static final String DROP = "DROP TABLE IF EXISTS `user`";
-    private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS user "
-            + "(mac_address varchar(40) NOT NULL, "
-            + "name varchar(255) NOT NULL, "
-            + "password varchar(255) NOT NULL, "
-            + "email varchar(255) NOT NULL, "
-            + "gender varchar(1) NOT NULL, "
-            + "school varchar(255) NOT NULL, "
-            + "year int(11) NOT NULL, "
-            + "PRIMARY KEY (mac_address))";
+    private static final String TRUNCATE = "TRUNCATE TABLE user";
     private static final String SELECT_ALL = "SELECT * FROM user";
     private static final String RETRIEVE = "SELECT * FROM user WHERE email LIKE ?";
-    private static final String INSERT = "INSERT INTO `user` "
+    private static final String INSERT = "INSERT INTO user "
             + "(mac_address, name, password, email, gender, school, year) "
             + "values(?,?,?,?,?,?,?)";
 
@@ -84,7 +75,7 @@ public class UserDAO {
                 psmt.setString(5, user.getGender() + "");
                 psmt.setString(6, user.getSchool());
                 psmt.setInt(7, user.getYear());
-
+                System.out.println(user);
                 psmt.executeUpdate();
             }
         } finally {
@@ -132,30 +123,33 @@ public class UserDAO {
      * @param conn connection to the database
      * @throws java.sql.SQLException
      */
-    public static void dropTable(Connection conn) throws SQLException {
+    public static void clear(Connection conn) throws SQLException {
         PreparedStatement psmt = null;
         try {
-            psmt = conn.prepareStatement(DROP);
+            psmt = conn.prepareStatement(TRUNCATE);
             psmt.executeUpdate();
         } finally {
             ConnectionManager.close(null, psmt, null);
         }
     }
 
-    /**
-     * Create an empty table of user
-     *
-     * @param conn
-     * @throws SQLException
-     */
-    public static void createTable(Connection conn) throws SQLException {
+    public static ArrayList<String> getAllMacAddresses(Connection conn) throws SQLException {
         PreparedStatement psmt = null;
+        ResultSet rs = null;
+        ArrayList<String> macAddressList = new ArrayList<String>();
+
         try {
-            psmt = conn.prepareStatement(CREATE_TABLE);
-            psmt.execute();
+
+            psmt = conn.prepareStatement(SELECT_ALL);
+            rs = psmt.executeQuery();
+            while (rs.next()) {
+                String macAddress = rs.getString(1);
+                macAddressList.add(macAddress);
+            }
         } finally {
-            ConnectionManager.close(null, psmt, null);
+            ConnectionManager.close(null, psmt, rs);
         }
+        return macAddressList;
     }
 
 }
