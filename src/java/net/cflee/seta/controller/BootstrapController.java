@@ -160,7 +160,7 @@ public class BootstrapController {
                                         String emailId = firstEmailParts[i];
                                         for (int j = 0; j < emailId.length() && emailIdIsValid; j++) {
                                             char characterCheck = emailId.
-                                                    charAt(i);
+                                                    charAt(j);
                                             if ((characterCheck < 'a' || characterCheck > 'z') && (characterCheck < '0' || characterCheck > '9')) {
                                                 emailIdIsValid = false;
                                             }
