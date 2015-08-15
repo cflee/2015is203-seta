@@ -22,7 +22,7 @@ public class LocationUpdateDAO {
     private static final String INSERT = "INSERT INTO location_update "
             + "(mac_address, location_id, time_stamp, row_number) "
             + "VALUES (?, ?, ?, ?)";
-    private static final String TRUNCATE = "DROP TABLE IF EXISTS location_update";
+    private static final String TRUNCATE = "TRUNCATE TABLE location_update";
     private static final String CHECK_FOR_EXISTING_RECORD = "SELECT row_number FROM location_update "
             + "WHERE mac_address = ? "
             + "AND time_stamp = ?";

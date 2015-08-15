@@ -15,7 +15,7 @@ import net.cflee.seta.utility.ConnectionManager;
 public class LocationDAO {
 
     private static final String TRUNCATE
-            = "DROP TABLE IF EXISTS location";
+            = "TRUNCATE TABLE location";
     private static final String INSERT
             = "INSERT INTO location VALUES(?,?)";
     private static final String RETRIEVE

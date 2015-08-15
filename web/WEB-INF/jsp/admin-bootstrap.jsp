@@ -17,6 +17,12 @@
             </p>
         </form>
         <h2>Add Data</h2>
+        <form action="/admin/add" method="post" enctype="multipart/form-data">
+            <p>
+                <input type="file" name="bootstrap-file">
+                <input type="submit" value="Submit">
+            </p>
+        </form>
         <h2>Bootstrap Location Data</h2>
         <h2>Add Location Data</h2>
         <h2>Delete Location Data</h2>
@@ -27,22 +33,29 @@
                     getAttribute("appLookupFile");
             FileValidationResult appFile = (FileValidationResult) request.
                     getAttribute("appFile");
+            FileValidationResult locationLookupFile = (FileValidationResult) request.
+                    getAttribute("locationLookupFile");
+            FileValidationResult locationFile = (FileValidationResult) request.
+                    getAttribute("locationFile");
 
-            if (demographicsFile != null) {
+    if (request.getAttribute("displayResult") != null) {
         %>
         <h2>Results</h2>
         <h3>Number of rows</h3>
         <p>
-            demographics.csv: <%= demographicsFile.getNumOfValidRows()%><br>
-            app-lookup.csv: <%= appLookupFile.getNumOfValidRows()%><br>
-            app.csv: <%= appFile.getNumOfValidRows()%><br>
+            <% if (demographicsFile != null) {%>demographics.csv: <%= demographicsFile.getNumOfValidRows()%><br><% } %>
+            <% if (appLookupFile != null) {%>app-lookup.csv: <%= appLookupFile.getNumOfValidRows()%><br><% } %>
+            <% if (appFile != null) {%>app.csv: <%= appFile.getNumOfValidRows()%><br><% } %>
+            <% if (locationLookupFile != null) {%>location-lookup.csv: <%= locationLookupFile.getNumOfValidRows()%><br><% } %>
+            <% if (locationFile != null) {%>location.csv: <%= locationFile.getNumOfValidRows()%><br><% } %>
         </p>
         <table>
             <thead>
                 <tr><th>Filename</th><th>Row</th><th>Error message</th></tr>
             </thead>
             <tbody>
-                <% for (FileValidationError error : demographicsFile.
+                <% if (demographicsFile != null) {
+                        for (FileValidationError error : demographicsFile.
                             getErrors()) {%>
                     <tr>
                         <td><%= error.getFilename()%></td>
@@ -54,8 +67,10 @@
                             <% } %>
                         </td>
                     </tr>
-                    <% } %>
-                    <% for (FileValidationError error : appLookupFile.
+                    <% }
+                        } %>
+                    <% if (appLookupFile != null) {
+                            for (FileValidationError error : appLookupFile.
                             getErrors()) {%>
                     <tr>
                         <td><%= error.getFilename()%></td>
@@ -67,8 +82,10 @@
                             <% } %>
                         </td>
                     </tr>
-                    <% } %>
-                    <% for (FileValidationError error : appFile.
+                    <% }
+                        } %>
+                    <% if (appFile != null) {
+                            for (FileValidationError error : appFile.
                             getErrors()) {%>
                     <tr>
                         <td><%= error.getFilename()%></td>
@@ -80,7 +97,38 @@
                             <% } %>
                         </td>
                     </tr>
-                    <% } %>
+                    <% }
+                        } %>
+                    <% if (locationLookupFile != null) {
+                            for (FileValidationError error : locationLookupFile.
+                                    getErrors()) {%>
+                    <tr>
+                        <td><%= error.getFilename()%></td>
+                        <td><%= error.getLineNumber()%></td>
+                        <td>
+                            <% for (String errorMessage : error.
+                                        getMessages()) {%>
+                            <%= errorMessage%> |
+                            <% } %>
+                        </td>
+                    </tr>
+                    <% }
+                        } %>
+                    <% if (locationFile != null) {
+                            for (FileValidationError error : locationFile.
+                                    getErrors()) {%>
+                    <tr>
+                        <td><%= error.getFilename()%></td>
+                        <td><%= error.getLineNumber()%></td>
+                        <td>
+                            <% for (String errorMessage : error.
+                                        getMessages()) {%>
+                            <%= errorMessage%> |
+                            <% } %>
+                        </td>
+                    </tr>
+                    <% }
+                        } %>
             </tbody>
         </table>
         <%

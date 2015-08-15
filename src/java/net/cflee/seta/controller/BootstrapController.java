@@ -862,12 +862,21 @@ public class BootstrapController {
      * @param conn connection to the database
      * @throws java.sql.SQLException
      */
-    public static void resetDatabase(Connection conn) throws SQLException {
+    public static void resetAllBasicData(Connection conn) throws SQLException {
         Statement stmt = conn.createStatement();
         stmt.execute("SET FOREIGN_KEY_CHECKS = 0");
         AppUpdateDAO.clear(conn);
         AppDAO.clear(conn);
         UserDAO.clear(conn);
+        stmt.execute("SET FOREIGN_KEY_CHECKS = 1");
+        stmt.close();
+    }
+
+    public static void resetAllLocationData(Connection conn) throws SQLException {
+        Statement stmt = conn.createStatement();
+        stmt.execute("SET FOREIGN_KEY_CHECKS = 0");
+        LocationDAO.clear(conn);
+        LocationUpdateDAO.clear(conn);
         stmt.execute("SET FOREIGN_KEY_CHECKS = 1");
         stmt.close();
     }
