@@ -263,7 +263,7 @@ public class BootstrapController {
         ArrayList<App> appList = new ArrayList<App>();
         List<String> validCategories = Arrays.asList("Books", "Social",
                 "Education", "Entertainment", "Information", "Library",
-                "Local", "Fools", "Fitness", "Games", "Others");
+                "Local", "Tools", "Fitness", "Games", "Others");
 
         // Trim white space
         appLookup.setTrimWhitespace(true);
