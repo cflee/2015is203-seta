@@ -30,19 +30,16 @@ public class AppUpdateDAO {
     private static final String SELECT_ALL = "SELECT mac_address, app_id, time_stamp FROM app_update";
 
     /**
-     * Check if a matching AppUpdate record exists. AppUpdate records     * are a match if the mac address and timestamp match an existing record in
-     * the database.
+     * Check if a matching AppUpdate record exists. AppUpdate records * are a match if the mac address and timestamp
+     * match an existing record in the database.
      *
-     * @param appUpdate AppUpdate object with macAddress and timestamp to be
-     * checked for
+     * @param appUpdate AppUpdate object with macAddress and timestamp to be checked for
      * @param conn connection to the database
-     * @return positive integer of row number if there is an existing record and
-     * it was from the current file, 0 if there is an existing record and not
-     * from current file, and -1 if there is no existing record
+     * @return positive integer of row number if there is an existing record and it was from the current file, 0 if
+     * there is an existing record and not from current file, and -1 if there is no existing record
      * @throws SQLException
      */
-    public static int checkForExistingRecord(AppUpdate appUpdate,
-            Connection conn) throws SQLException {
+    public static int checkForExistingRecord(AppUpdate appUpdate, Connection conn) throws SQLException {
         PreparedStatement psmt = null;
         ResultSet rs = null;
         try {
@@ -73,7 +70,6 @@ public class AppUpdateDAO {
      * @throws java.sql.SQLException
      */
     public static void insert(AppUpdate appUpdate, Connection conn) throws SQLException {
-
         PreparedStatement psmt = null;
 
         try {
@@ -98,8 +94,7 @@ public class AppUpdateDAO {
      * @param conn
      * @throws SQLException
      */
-    public static void updateLocationId(AppUpdate appUpdate,
-            Connection conn) throws SQLException {
+    public static void updateLocationId(AppUpdate appUpdate, Connection conn) throws SQLException {
         PreparedStatement psmt = null;
 
         try {
@@ -108,8 +103,7 @@ public class AppUpdateDAO {
             psmt.setInt(1, appUpdate.getAppId());
             psmt.setInt(2, appUpdate.getRowNo());
             psmt.setString(3, appUpdate.getMacAddress());
-            psmt.setTimestamp(4, new Timestamp(appUpdate.getTimestamp().
-                    getTime()));
+            psmt.setTimestamp(4, new Timestamp(appUpdate.getTimestamp().getTime()));
             psmt.executeUpdate();
         } finally {
             ConnectionManager.close(null, psmt, null);

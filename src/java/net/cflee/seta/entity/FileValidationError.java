@@ -12,8 +12,7 @@ public class FileValidationError implements Comparable<FileValidationError> {
     private ArrayList<String> messageList;
 
     /**
-     * Construct a fileValidationError object with filename, lineNumber and an
-     * arrayList of error messages
+     * Construct a fileValidationError object with filename, lineNumber and an arrayList of error messages
      *
      * @param filename filename
      * @param lineNumber line number in file that the errors occurred
@@ -35,7 +34,7 @@ public class FileValidationError implements Comparable<FileValidationError> {
     }
 
     /**
-     * Set the macaddress of the file
+     * Set the filename of the file
      *
      * @param filename
      */
@@ -83,8 +82,8 @@ public class FileValidationError implements Comparable<FileValidationError> {
      * Natural order: lineNumber ascending
      *
      * @param that FileValidationError to be compared against
-     * @return negative if this object should be before that, positive if this
-     * object should be after that, and 0 when they are tied
+     * @return negative if this object should be before that, positive if this object should be after that, and 0 when
+     * they are tied
      */
     @Override
     public int compareTo(FileValidationError that) {

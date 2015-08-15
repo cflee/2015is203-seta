@@ -84,11 +84,9 @@ public class ConnectionManager {
     public static Connection getConnection() throws SQLException {
         Connection conn = null;
         try {
-
             Class.forName("com.mysql.jdbc.Driver");
             //System.out.println("CONN:" + dbURL);
-            conn = DriverManager
-                    .getConnection(dbURL, dbUser, dbPassword);
+            conn = DriverManager.getConnection(dbURL, dbUser, dbPassword);
 
         } catch (ClassNotFoundException ex) {
             String msg = "Unable to load MySQL JDBC Driver.";
@@ -114,8 +112,7 @@ public class ConnectionManager {
                 rs.close();
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ConnectionManager.class.getName()).log(Level.WARNING,
-                    "Unable to close ResultSet", ex);
+            Logger.getLogger(ConnectionManager.class.getName()).log(Level.WARNING, "Unable to close ResultSet", ex);
         }
 
         close(conn, stmt);
@@ -133,16 +130,14 @@ public class ConnectionManager {
                 stmt.close();
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ConnectionManager.class.getName()).log(Level.WARNING,
-                    "Unable to close Statement", ex);
+            Logger.getLogger(ConnectionManager.class.getName()).log(Level.WARNING, "Unable to close Statement", ex);
         }
         try {
             if (conn != null) {
                 conn.close();
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ConnectionManager.class.getName()).log(Level.WARNING,
-                    "Unable to close Connection", ex);
+            Logger.getLogger(ConnectionManager.class.getName()).log(Level.WARNING, "Unable to close Connection", ex);
         }
     }
 }

@@ -27,7 +27,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-@WebServlet(name = "BootstrapServlet", urlPatterns = { "/admin/bootstrap" })
+@WebServlet(name = "BootstrapServlet", urlPatterns = {"/admin/bootstrap"})
 public class BootstrapServlet extends HttpServlet {
 
     /**
@@ -39,9 +39,7 @@ public class BootstrapServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request,
-            HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // don't bother checking for auth, just redirect
         response.sendRedirect("/admin");
     }
@@ -55,9 +53,7 @@ public class BootstrapServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request,
-            HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
@@ -72,10 +68,8 @@ public class BootstrapServlet extends HttpServlet {
         DiskFileItemFactory factory = new DiskFileItemFactory();
 
         // Configure a repository (to ensure a secure temp location is used)
-        ServletContext servletContext = this.getServletConfig().
-                getServletContext();
-        File repository = (File) servletContext.getAttribute(
-                "javax.servlet.context.tempdir");
+        ServletContext servletContext = this.getServletConfig().getServletContext();
+        File repository = (File) servletContext.getAttribute("javax.servlet.context.tempdir");
         factory.setRepository(repository);
 
         // Create a new file upload handler
@@ -94,19 +88,16 @@ public class BootstrapServlet extends HttpServlet {
 
             while (iter.hasNext()) {
                 FileItem item = iter.next();
-                if (!item.isFormField() && item.getFieldName().equals(
-                        "bootstrap-file")) {
+                if (!item.isFormField() && item.getFieldName().equals("bootstrap-file")) {
 
                     File tempFile = File.createTempFile("temp", null);
                     item.write(tempFile);
 
                     ZipFile zipFile = new ZipFile(tempFile);
                     ZipEntry demographics = zipFile.getEntry("demographics.csv");
-                    ZipEntry appLookup = zipFile.getEntry(
-                            "app-lookup.csv");
+                    ZipEntry appLookup = zipFile.getEntry("app-lookup.csv");
                     ZipEntry app = zipFile.getEntry("app.csv");
-                    ZipEntry locationLookup = zipFile.getEntry(
-                            "location-lookup.csv");
+                    ZipEntry locationLookup = zipFile.getEntry("location-lookup.csv");
                     ZipEntry location = zipFile.getEntry("location.csv");
 
                     try {
@@ -115,19 +106,11 @@ public class BootstrapServlet extends HttpServlet {
                         if (appLookup != null) {
                             // basic bootstrap
                             BootstrapController.resetAllBasicData(conn);
-                            demographicsResult = BootstrapController.
-                                    processDemographicsFile(
-                                            zipFile.getInputStream(demographics),
-                                            "demographics.csv", conn);
-                            appLookupResult = BootstrapController.
-                                    processAppLookupFile(
-                                            zipFile.getInputStream(
-                                                    appLookup),
-                                            "app-lookup.csv", conn);
-                            appResult = BootstrapController.
-                                    processAppFile(
-                                            zipFile.getInputStream(app),
-                                            "app.csv", conn);
+                            demographicsResult = BootstrapController.processDemographicsFile(zipFile.getInputStream(
+                                    demographics), "demographics.csv", conn);
+                            appLookupResult = BootstrapController
+                                    .processAppLookupFile(zipFile.getInputStream(appLookup), "app-lookup.csv", conn);
+                            appResult = BootstrapController.processAppFile(zipFile.getInputStream(app), "app.csv", conn);
                         } else {
                             // basic add data
                             if (demographics == null) {
@@ -136,23 +119,17 @@ public class BootstrapServlet extends HttpServlet {
                                  * FileValidationResult( 0, new ArrayList<FileValidationError>());
                                  */
                             } else {
-                                demographicsResult = BootstrapController.
-                                        processDemographicsFile(
-                                                zipFile.getInputStream(
-                                                        demographics),
-                                                "demographics.csv", conn);
+                                demographicsResult = BootstrapController.processDemographicsFile(zipFile.getInputStream(
+                                        demographics), "demographics.csv", conn);
                             }
-                            appLookupResult = new FileValidationResult(
-                                    0, new ArrayList<FileValidationError>());
+                            appLookupResult = new FileValidationResult(0, new ArrayList<FileValidationError>());
                             if (app == null) {
                                 /*
                                  * appResult = new FileValidationResult( 0, new ArrayList<FileValidationError>());
                                  */
                             } else {
-                                appResult = BootstrapController.
-                                        processAppFile(
-                                                zipFile.getInputStream(app),
-                                                "app.csv", conn);
+                                appResult = BootstrapController.processAppFile(zipFile.getInputStream(app), "app.csv",
+                                        conn);
                             }
                         }
 
@@ -160,39 +137,28 @@ public class BootstrapServlet extends HttpServlet {
                         if (locationLookup == null) {
                             /*
                              * locationLookupResult = new FileValidationResult(                                    0, new ArrayList<FileValidationError>());
-                            locationResult = new FileValidationResult(
-                                    0, new ArrayList<FileValidationError>());
+                             locationResult = new FileValidationResult(
+                             0, new ArrayList<FileValidationError>());
                              */
                         } else {
                             BootstrapController.resetAllLocationData(conn);
-                            locationLookupResult = BootstrapController.
-                                    processLocationLookUpFile(zipFile.
-                                            getInputStream(locationLookup),
-                                            "location-lookup.csv", conn);
-                            locationResult = BootstrapController.
-                                    processLocationFile(zipFile.getInputStream(
-                                                    location), "location.csv",
-                                            conn);
+                            locationLookupResult = BootstrapController.processLocationLookUpFile(zipFile.getInputStream(
+                                    locationLookup), "location-lookup.csv", conn);
+                            locationResult = BootstrapController.processLocationFile(zipFile.getInputStream(location),
+                                    "location.csv", conn);
                         }
 
                         request.setAttribute("displayResult", true);
-                        request.setAttribute("demographicsFile",
-                                demographicsResult);
+                        request.setAttribute("demographicsFile", demographicsResult);
                         request.setAttribute("appLookupFile", appLookupResult);
                         request.setAttribute("appFile", appResult);
-                        request.setAttribute("locationLookupFile",
-                                locationLookupResult);
+                        request.setAttribute("locationLookupFile", locationLookupResult);
                         request.setAttribute("locationFile", locationResult);
-                        request.getRequestDispatcher(
-                                "/WEB-INF/jsp/admin-bootstrap.jsp").
-                                forward(request, response);
+                        request.getRequestDispatcher("/WEB-INF/jsp/admin-bootstrap.jsp").forward(request, response);
 
                     } catch (SQLException e) {
-                        request.setAttribute("errorMessage",
-                                "SQL error: " + e.getMessage());
-                        request.getRequestDispatcher(
-                                "/WEB-INF/jsp/errorPage.jsp").forward(request,
-                                        response);
+                        request.setAttribute("errorMessage", "SQL error: " + e.getMessage());
+                        request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(request, response);
                     }
 
                 }
@@ -200,21 +166,17 @@ public class BootstrapServlet extends HttpServlet {
 
         } catch (FileUploadException e) {
             request.setAttribute("errorMessage", "Unable to upload file!");
-            request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(
-                    request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(request, response);
         } catch (ZipException e) {
             request.setAttribute("errorMessage", "No zip file found!");
-            request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(
-                    request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(request, response);
         } catch (IOException e) {
             request.setAttribute("errorMessage", "IO Error");
-            request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(
-                    request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(request, response);
         } catch (Exception e) {
             // catch for file item.write() method
             request.setAttribute("errorMessage", "Exception Error");
-            request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(
-                    request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(request, response);
         } finally {
             ConnectionManager.close(conn, null, null);
         }

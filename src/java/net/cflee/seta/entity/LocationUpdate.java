@@ -13,8 +13,7 @@ public class LocationUpdate implements Comparable<LocationUpdate> {
     private int rowNo;
 
     /**
-     * Construct a locationUpdate object with macAddress, timestamp, locationId
-     * and rowNo = 0
+     * Construct a locationUpdate object with macAddress, timestamp, locationId and rowNo = 0
      *
      * @param macAddress
      * @param timestamp
@@ -25,8 +24,7 @@ public class LocationUpdate implements Comparable<LocationUpdate> {
     }
 
     /**
-     * Construct a locationUpdate object with macAddress, timestamp, locationId,
-     * email and rowNo
+     * Construct a locationUpdate object with macAddress, timestamp, locationId, email and rowNo
      *
      * @param macAddress
      * @param timestamp
@@ -103,8 +101,7 @@ public class LocationUpdate implements Comparable<LocationUpdate> {
      * Natural order: mac address ascending
      *
      * @param that LocationUpdate to be compared against
-     * @return -1 if this object should be before that, +1 if this object should
-     * be after that, and 0 when they are tied
+     * @return -1 if this object should be before that, +1 if this object should be after that, and 0 when they are tied
      */
     @Override
     public int compareTo(LocationUpdate that) {

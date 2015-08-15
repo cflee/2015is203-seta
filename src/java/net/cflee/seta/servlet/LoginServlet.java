@@ -1,4 +1,3 @@
-
 package net.cflee.seta.servlet;
 
 import java.io.IOException;
@@ -14,19 +13,19 @@ import net.cflee.seta.controller.LoginController;
 import net.cflee.seta.entity.User;
 import net.cflee.seta.utility.ConnectionManager;
 
-@WebServlet(name = "LoginServlet", urlPatterns = { "/login" })
+@WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet {
 
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         if (user != null) {
@@ -34,20 +33,19 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request,
-                response);
-    } 
+        request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+    }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         Connection conn = null;
@@ -66,8 +64,7 @@ public class LoginServlet extends HttpServlet {
                 user = LoginController.login(username, password, conn);
             } catch (SQLException e) {
                 request.setAttribute("errorMessage", "SQL connection error");
-                request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp")
-                        .forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(request, response);
             }
 
             if (user != null) {
@@ -80,8 +77,7 @@ public class LoginServlet extends HttpServlet {
             } else {
                 request.setAttribute("username", username);
                 request.setAttribute("errorMessage", "Invalid username/password");
-                request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(
-                        request, response);
+                request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
             }
         } finally {
             ConnectionManager.close(conn, null, null);

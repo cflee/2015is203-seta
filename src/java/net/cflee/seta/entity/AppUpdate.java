@@ -24,8 +24,7 @@ public class AppUpdate implements Comparable<AppUpdate> {
     }
 
     /**
-     * Construct a appUpdate object with macAddress, timestamp, appId, email and
-     * rowNo
+     * Construct a appUpdate object with macAddress, timestamp, appId, email and rowNo
      *
      * @param macAddress
      * @param timestamp
@@ -102,8 +101,7 @@ public class AppUpdate implements Comparable<AppUpdate> {
      * Natural order: mac address ascending
      *
      * @param that LocationUpdate to be compared against
-     * @return -1 if this object should be before that, +1 if this object should
-     * be after that, and 0 when they are tied
+     * @return -1 if this object should be before that, +1 if this object should be after that, and 0 when they are tied
      */
     @Override
     public int compareTo(AppUpdate that) {

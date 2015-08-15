@@ -28,15 +28,14 @@ import net.cflee.seta.entity.LocationUpdate;
 import net.cflee.seta.entity.User;
 
 /**
- * A controller class that provides services to the Servlet layer, to validate
- * and process the various CSV data files that can be supplied for Bootstrap use
- * case.
+ * A controller class that provides services to the Servlet layer, to validate and process the various CSV data files
+ * that can be supplied for Bootstrap use case.
  */
 public class BootstrapController {
 
     /**
-     * Processes an InputStream of demographics.csv data, validates it, and then
-     * passes valid records to UserDAO for insertion.
+     * Processes an InputStream of demographics.csv data, validates it, and then passes valid records to UserDAO for
+     * insertion.
      *
      * @param inputStream InputStream of demographics.csv data
      * @param filename filename to use in FileValidationErrors
@@ -45,10 +44,9 @@ public class BootstrapController {
      * @throws java.io.IOException if InputStream cannot be read
      * @throws java.sql.SQLException
      */
-    public static FileValidationResult processDemographicsFile(
-            InputStream inputStream, String filename, Connection conn) throws IOException, SQLException {
-        CsvReader demographics = new CsvReader(
-                new InputStreamReader(inputStream), ',');
+    public static FileValidationResult processDemographicsFile(InputStream inputStream, String filename, Connection conn)
+            throws IOException, SQLException {
+        CsvReader demographics = new CsvReader(new InputStreamReader(inputStream), ',');
         ArrayList<FileValidationError> errorList = new ArrayList<FileValidationError>();
         ArrayList<User> userList = new ArrayList<User>();
 
@@ -159,9 +157,9 @@ public class BootstrapController {
                                     for (int i = 0; i < firstEmailParts.length - 1 && emailIdIsValid; i++) {
                                         String emailId = firstEmailParts[i];
                                         for (int j = 0; j < emailId.length() && emailIdIsValid; j++) {
-                                            char characterCheck = emailId.
-                                                    charAt(j);
-                                            if ((characterCheck < 'a' || characterCheck > 'z') && (characterCheck < '0' || characterCheck > '9')) {
+                                            char characterCheck = emailId.charAt(j);
+                                            if ((characterCheck < 'a' || characterCheck > 'z')
+                                                    && (characterCheck < '0' || characterCheck > '9')) {
                                                 emailIdIsValid = false;
                                             }
                                         }
@@ -176,27 +174,18 @@ public class BootstrapController {
 
                                         // check if email domain ends with
                                         // .smu.edu.sg
-                                        if (!secondEmailPart.endsWith(
-                                                ".smu.edu.sg")) {
+                                        if (!secondEmailPart.endsWith(".smu.edu.sg")) {
                                             // does not end with smu.edu.sg
-                                            errorMessageList.
-                                                    add("invalid email");
+                                            errorMessageList.add("invalid email");
                                         } else {
                                             // check if the email domain apart from ".smu.edu.sg"
                                             // is one of the six schools
-                                            school = secondEmailPart.
-                                                    substring(0,
-                                                            secondEmailPart.
-                                                            length() - 11).
-                                                    toLowerCase();
-                                            if (!school.equals("sis") && !school.
-                                                    equals("business") && !school.
-                                                    equals("economics") && !school.
-                                                    equals("accountancy") && !school.
-                                                    equals("law") && !school.
-                                                    equals("socsc")) {
-                                                errorMessageList.add(
-                                                        "invalid email");
+                                            school = secondEmailPart.substring(0, secondEmailPart.length() - 11)
+                                                    .toLowerCase();
+                                            if (!school.equals("sis") && !school.equals("business")
+                                                    && !school.equals("economics") && !school.equals("accountancy")
+                                                    && !school.equals("law") && !school.equals("socsc")) {
+                                                errorMessageList.add("invalid email");
                                             }
                                         }
                                     }
@@ -225,11 +214,9 @@ public class BootstrapController {
 
             // there is at least one field that is blank
             if (!errorMessageList.isEmpty()) {
-                errorList.add(new FileValidationError(filename, rowNumber,
-                        errorMessageList));
+                errorList.add(new FileValidationError(filename, rowNumber, errorMessageList));
             } else {
-                userList.add(new User(macAddress, name, password, email, gender,
-                        school, year));
+                userList.add(new User(macAddress, name, password, email, gender, school, year));
                 numOfValidRecords++;
             }
             rowNumber++;
@@ -245,8 +232,8 @@ public class BootstrapController {
     }
 
     /**
-     * Processes an InputStream of app-lookup.csv data, validates it, and then
-     * passes valid records to AppDAO for insertion.
+     * Processes an InputStream of app-lookup.csv data, validates it, and then passes valid records to AppDAO for
+     * insertion.
      *
      * @param inputStream InputStream of app-lookup.csv data
      * @param filename filename to use in FileValidationErrors
@@ -255,15 +242,14 @@ public class BootstrapController {
      * @throws java.io.IOException if InputStream cannot be read
      * @throws java.sql.SQLException
      */
-    public static FileValidationResult processAppLookupFile(
-            InputStream inputStream, String filename, Connection conn) throws IOException, SQLException {
+    public static FileValidationResult processAppLookupFile(InputStream inputStream, String filename, Connection conn)
+            throws IOException, SQLException {
         CsvReader appLookup = new CsvReader(new InputStreamReader(inputStream),
                 ',');
         ArrayList<FileValidationError> errorList = new ArrayList<FileValidationError>();
         ArrayList<App> appList = new ArrayList<App>();
-        List<String> validCategories = Arrays.asList("Books", "Social",
-                "Education", "Entertainment", "Information", "Library",
-                "Local", "Tools", "Fitness", "Games", "Others");
+        List<String> validCategories = Arrays.asList("Books", "Social", "Education", "Entertainment", "Information",
+                "Library", "Local", "Tools", "Fitness", "Games", "Others");
 
         // Trim white space
         appLookup.setTrimWhitespace(true);
@@ -315,7 +301,6 @@ public class BootstrapController {
                     if (appId < 1) {
                         errorMessageList.add("invalid app id");
                     }
-
                 } catch (NumberFormatException e) {
                     // location-id is not an integer
                     errorMessageList.add("invalid app id");
@@ -324,9 +309,8 @@ public class BootstrapController {
                 // validation for app-category
                 // normalise to initial caps
                 if (appCategory.length() > 2) {
-                    normalisedAppCategory = appCategory.substring(0, 1).
-                            toUpperCase()
-                            + appCategory.substring(1).toLowerCase();
+                    normalisedAppCategory = appCategory.substring(0, 1).toUpperCase() + appCategory.substring(1)
+                            .toLowerCase();
                     if (!validCategories.contains(normalisedAppCategory)) {
                         errorMessageList.add("invalid app category");
                     }
@@ -336,8 +320,7 @@ public class BootstrapController {
             }
 
             if (!errorMessageList.isEmpty()) {
-                errorList.add(new FileValidationError(filename, rowNumber,
-                        errorMessageList));
+                errorList.add(new FileValidationError(filename, rowNumber, errorMessageList));
             } else {
                 appList.add(new App(appId, appName, normalisedAppCategory));
                 numOfValidRecords++;
@@ -354,8 +337,8 @@ public class BootstrapController {
     }
 
     /**
-     * Processes an InputStream of app.csv data, validates it, and then passes
-     * valid records to AppUpdateDAO for insertion.
+     * Processes an InputStream of app.csv data, validates it, and then passes valid records to AppUpdateDAO for
+     * insertion.
      *
      * @param inputStream InputStream of app.csv data
      * @param filename filename to use in FileValidationErrors
@@ -364,8 +347,8 @@ public class BootstrapController {
      * @throws java.io.IOException if InputStream cannot be read
      * @throws java.sql.SQLException
      */
-    public static FileValidationResult processAppFile(
-            InputStream inputStream, String filename, Connection conn) throws IOException, SQLException {
+    public static FileValidationResult processAppFile(InputStream inputStream, String filename, Connection conn) throws
+            IOException, SQLException {
         CsvReader app = new CsvReader(new InputStreamReader(inputStream),
                 ',');
         ArrayList<FileValidationError> errorList = new ArrayList<FileValidationError>();
@@ -444,23 +427,20 @@ public class BootstrapController {
 
                 // validation for timestamp
                 // create the date format to check against
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
-                        "yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
                 try {
                     // check if the timestampString fits with the pattern
                     timestamp = simpleDateFormat.parse(timestampString);
 
                     // create a string representation of timestamp
-                    String formattedTimestamp = simpleDateFormat.format(
-                            timestamp);
+                    String formattedTimestamp = simpleDateFormat.format(timestamp);
 
                     // validation for the formattedTimestamp
                     if (!formattedTimestamp.equals(timestampString)) {
                         //if formattedTimestamp is different from timeStampString
                         errorMessageList.add("invalid timestamp");
                     }
-
                 } catch (ParseException e) {
                     // if the timestamp could not be parsed by the date format
                     errorMessageList.add("invalid timestamp");
@@ -468,12 +448,9 @@ public class BootstrapController {
 
                 //validation for duplicate row
                 if (errorMessageList.isEmpty()) {
+                    AppUpdate appUpdate = new AppUpdate(macAddress, timestamp, appId, rowNumber);
 
-                    AppUpdate appUpdate = new AppUpdate(
-                            macAddress, timestamp, appId, rowNumber);
-
-                    int existingRowNo = AppUpdateDAO.
-                            checkForExistingRecord(appUpdate, conn);
+                    int existingRowNo = AppUpdateDAO.checkForExistingRecord(appUpdate, conn);
                     if (existingRowNo != -1) {
                         // there is a duplicate!
                         if (existingRowNo == 0) {
@@ -493,20 +470,17 @@ public class BootstrapController {
                             for (FileValidationError existingError : errorList) {
                                 if (existingError.getLineNumber() == existingRowNo) {
                                     hasExistingError = true;
-                                    existingError.getMessages().add(
-                                            "duplicate row");
+                                    existingError.getMessages().add("duplicate row");
                                 }
                             }
                             if (!hasExistingError) {
                                 ArrayList<String> tempMessageList = new ArrayList<String>();
                                 tempMessageList.add("duplicate row");
-                                errorList.add(new FileValidationError(filename,
-                                        existingRowNo, tempMessageList));
+                                errorList.add(new FileValidationError(filename, existingRowNo, tempMessageList));
                             }
                             // then update the database with this new location
                             // update's location ID
-                            AppUpdateDAO.updateLocationId(appUpdate,
-                                    conn);
+                            AppUpdateDAO.updateLocationId(appUpdate, conn);
                         }
                     } else {
                         // no existing LocationUpdate that matches
@@ -517,9 +491,7 @@ public class BootstrapController {
                 }
             }
             if (!errorMessageList.isEmpty()) {
-
-                errorList.add(new FileValidationError(filename, rowNumber,
-                        errorMessageList));
+                errorList.add(new FileValidationError(filename, rowNumber, errorMessageList));
             }
             rowNumber++;
         }
@@ -544,8 +516,8 @@ public class BootstrapController {
     }
 
     /**
-     * Processes an InputStream of location-lookup.csv data, validates it, and
-     * then passes valid records to LocationDAO for insertion.
+     * Processes an InputStream of location-lookup.csv data, validates it, and then passes valid records to LocationDAO
+     * for insertion.
      *
      * @param inputStream InputStream of location-lookup.csv data
      * @param filename filename to use in FileValidationErrors
@@ -554,10 +526,9 @@ public class BootstrapController {
      * @throws java.io.IOException if InputStream cannot be read
      * @throws java.sql.SQLException
      */
-    public static FileValidationResult processLocationLookUpFile(
-            InputStream inputStream, String filename, Connection conn) throws IOException, SQLException {
-        CsvReader locationLookUp = new CsvReader(new InputStreamReader(
-                inputStream), ',');
+    public static FileValidationResult processLocationLookUpFile(InputStream inputStream, String filename,
+            Connection conn) throws IOException, SQLException {
+        CsvReader locationLookUp = new CsvReader(new InputStreamReader(inputStream), ',');
         ArrayList<FileValidationError> errorList = new ArrayList<FileValidationError>();
         ArrayList<Location> locationList = new ArrayList<Location>();
 
@@ -605,7 +576,6 @@ public class BootstrapController {
                     if (locationId < 1) {
                         errorMessageList.add("invalid location id");
                     }
-
                 } catch (NumberFormatException e) {
                     // location-id is not an integer
                     errorMessageList.add("invalid location id");
@@ -631,8 +601,7 @@ public class BootstrapController {
             }
 
             if (!errorMessageList.isEmpty()) {
-                errorList.add(new FileValidationError(filename, rowNumber,
-                        errorMessageList));
+                errorList.add(new FileValidationError(filename, rowNumber, errorMessageList));
             } else {
                 locationList.add(new Location(locationId, semanticPlace));
                 numOfValidRecords++;
@@ -649,8 +618,8 @@ public class BootstrapController {
     }
 
     /**
-     * Processes an InputStream of location.csv data, validates it, and then
-     * passes valid records to LocationUpdateDAO for insertion.
+     * Processes an InputStream of location.csv data, validates it, and then passes valid records to LocationUpdateDAO
+     * for insertion.
      *
      * @param inputStream InputStream of location.csv data
      * @param filename filename to use in FileValidationErrors
@@ -659,8 +628,8 @@ public class BootstrapController {
      * @throws java.io.IOException if InputStream cannot be read
      * @throws java.sql.SQLException
      */
-    public static FileValidationResult processLocationFile(
-            InputStream inputStream, String filename, Connection conn) throws IOException, SQLException {
+    public static FileValidationResult processLocationFile(InputStream inputStream, String filename, Connection conn)
+            throws IOException, SQLException {
         CsvReader location = new CsvReader(new InputStreamReader(inputStream),
                 ',');
         ArrayList<FileValidationError> errorList = new ArrayList<FileValidationError>();
@@ -732,16 +701,14 @@ public class BootstrapController {
 
                 // validation for timestamp
                 // create the date format to check against
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
-                        "yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
                 try {
                     // check if the timestampString fits with the pattern
                     timestamp = simpleDateFormat.parse(timestampString);
 
                     // create a string representation of timestamp
-                    String formattedTimestamp = simpleDateFormat.format(
-                            timestamp);
+                    String formattedTimestamp = simpleDateFormat.format(timestamp);
 
                     // validation for the formattedTimestamp
                     if (!formattedTimestamp.equals(timestampString)) {
@@ -757,11 +724,9 @@ public class BootstrapController {
                 //validation for duplicate row
                 if (errorMessageList.isEmpty()) {
 
-                    LocationUpdate locationUpdate = new LocationUpdate(
-                            macAddress, timestamp, locationId, rowNumber);
+                    LocationUpdate locationUpdate = new LocationUpdate(macAddress, timestamp, locationId, rowNumber);
 
-                    int existingRowNo = LocationUpdateDAO.
-                            checkForExistingRecord(locationUpdate, conn);
+                    int existingRowNo = LocationUpdateDAO.checkForExistingRecord(locationUpdate, conn);
                     if (existingRowNo != -1) {
                         // there is a duplicate!
                         if (existingRowNo == 0) {
@@ -781,20 +746,17 @@ public class BootstrapController {
                             for (FileValidationError existingError : errorList) {
                                 if (existingError.getLineNumber() == existingRowNo) {
                                     hasExistingError = true;
-                                    existingError.getMessages().add(
-                                            "duplicate row");
+                                    existingError.getMessages().add("duplicate row");
                                 }
                             }
                             if (!hasExistingError) {
                                 ArrayList<String> tempMessageList = new ArrayList<String>();
                                 tempMessageList.add("duplicate row");
-                                errorList.add(new FileValidationError(filename,
-                                        existingRowNo, tempMessageList));
+                                errorList.add(new FileValidationError(filename, existingRowNo, tempMessageList));
                             }
                             // then update the database with this new location
                             // update's location ID
-                            LocationUpdateDAO.updateLocationId(locationUpdate,
-                                    conn);
+                            LocationUpdateDAO.updateLocationId(locationUpdate, conn);
                         }
                     } else {
                         // no existing LocationUpdate that matches
@@ -805,9 +767,7 @@ public class BootstrapController {
                 }
             }
             if (!errorMessageList.isEmpty()) {
-
-                errorList.add(new FileValidationError(filename, rowNumber,
-                        errorMessageList));
+                errorList.add(new FileValidationError(filename, rowNumber, errorMessageList));
             }
             rowNumber++;
         }

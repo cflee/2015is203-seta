@@ -25,16 +25,6 @@ public class LocationDAO {
             = "SELECT location_id FROM location";
     private static final String SELECT_ALL
             = "SELECT location_id, semantic_place FROM location";
-    private static final String SEMANTIC_PLACES_IN_SIS
-            = "SELECT DISTINCT semantic_place "
-            + "FROM location";
-    private static final String CHECK_SEMANTIC_PLACE
-            = "SELECT DISTINCT semantic_place "
-            + "FROM location "
-            + "WHERE semantic_place = ?";
-    private static final String RETRIEVE_SEMANTIC_PLACE
-            = "SELECT DISTINCT semantic_place FROM location "
-            + "WHERE location_id = ?";
 
     /**
      * To check if the location id is valid
@@ -158,79 +148,4 @@ public class LocationDAO {
         return resultMap;
     }
 
-    /**
-     * Retrieve the list of semantic places belonging to SIS
-     *
-     * @param conn connection to the database
-     * @return the list of SIS semantic places
-     * @throws java.sql.SQLException
-     */
-    public static ArrayList<String> retrieveSemanticPlacesInSIS(Connection conn) throws SQLException {
-
-        PreparedStatement psmt = null;
-        ResultSet rs = null;
-        ArrayList<String> semanticPlacesInSIS = new ArrayList<String>();
-
-        try {
-
-            psmt = conn.prepareStatement(SEMANTIC_PLACES_IN_SIS);
-            rs = psmt.executeQuery();
-            while (rs.next()) {
-                String semanticPlace = rs.getString(1);
-                semanticPlacesInSIS.add(semanticPlace);
-            }
-        } finally {
-            ConnectionManager.close(null, psmt, rs);
-        }
-        return semanticPlacesInSIS;
-    }
-
-    /**
-     * To check if the semantic place is valid
-     *
-     * @param userSpecifiedSemanticPlace specified semantic place
-     * @param conn connection to the database
-     * @return return valid if the semantic place is valid, else return false
-     * @throws java.sql.SQLException
-     */
-    public static boolean checkSemanticPlace(String userSpecifiedSemanticPlace, Connection conn) throws SQLException {
-        PreparedStatement psmt = null;
-        ResultSet rs = null;
-        try {
-            psmt = conn.prepareStatement(CHECK_SEMANTIC_PLACE);
-            psmt.setString(1, userSpecifiedSemanticPlace);
-            rs = psmt.executeQuery();
-            if (rs.next()) {
-                return true;
-            }
-        } finally {
-            ConnectionManager.close(null, psmt, rs);
-        }
-        return false;
-    }
-
-    /**
-     * Retrieve semantic place based on the location id
-     *
-     * @param locationId specified location id
-     * @param conn connection to the database
-     * @return semantic place found
-     * @throws java.sql.SQLException
-     */
-    public static String retrieveSemanticPlace(int locationId, Connection conn) throws SQLException {
-        PreparedStatement psmt = null;
-        ResultSet rs = null;
-        String semanticPlace = null;
-        try {
-            psmt = conn.prepareStatement(RETRIEVE_SEMANTIC_PLACE);
-            psmt.setInt(1, locationId);
-            rs = psmt.executeQuery();
-            while (rs.next()) {
-                semanticPlace = rs.getString(1);
-            }
-        } finally {
-            ConnectionManager.close(null, psmt, rs);
-        }
-        return semanticPlace;
-    }
 }

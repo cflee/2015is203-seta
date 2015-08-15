@@ -3,8 +3,8 @@ package net.cflee.seta.entity;
 import java.util.ArrayList;
 
 /**
- * An entity class of group consisting of the total number of rows without
- * bootstrapping errors and an arrayList of error messages
+ * An entity class of group consisting of the total number of rows without bootstrapping errors and an arrayList of
+ * error messages
  */
 public class FileValidationResult {
 
@@ -12,8 +12,8 @@ public class FileValidationResult {
     private ArrayList<FileValidationError> errorList;
 
     /**
-     * Construct a fileValidationResult object with the total number of rows
-     * without bootstrapping errors and an arrayList of error messages
+     * Construct a fileValidationResult object with the total number of rows without bootstrapping errors and an
+     * arrayList of error messages
      *
      * @param numOfValidRows
      * @param errors

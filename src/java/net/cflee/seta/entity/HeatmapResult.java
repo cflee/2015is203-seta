@@ -1,8 +1,8 @@
 package net.cflee.seta.entity;
 
 /**
- * An entity class of HeatmapResult with the semantic place, total number of
- * people in the semantic place, and the crowd density of the semantic place
+ * An entity class of HeatmapResult with the semantic place, total number of people in the semantic place, and the crowd
+ * density of the semantic place
  *
  */
 public class HeatmapResult {
@@ -12,8 +12,7 @@ public class HeatmapResult {
     private int crowdDensity;
 
     /**
-     * Construct a HeatmapResult object with semantic place and total number of
-     * people in the semantic place
+     * Construct a HeatmapResult object with semantic place and total number of people in the semantic place
      *
      * @param placeName
      * @param numOfPeople
@@ -52,14 +51,12 @@ public class HeatmapResult {
     }
 
     /**
-     * Calculate the crowd density based on the total number of people in the
-     * semantic place
+     * Calculate the crowd density based on the total number of people in the semantic place
      *
      * @param numOfPeople
-     * @return 0 if there is nobody in the semantic place, 1 if there are more
-     * than 1 but less than 3 people, 2 if there are more 2 but less than 6, 3
-     * if there are more 5 but less than 11, 4 if there are more 10 but less
-     * than 21, 5 if there are more 20 but less than 31, and 6 otherwise
+     * @return 0 if there is nobody in the semantic place, 1 if there are more than 1 but less than 3 people, 2 if there
+     * are more 2 but less than 6, 3 if there are more 5 but less than 11, 4 if there are more 10 but less than 21, 5 if
+     * there are more 20 but less than 31, and 6 otherwise
      */
     private int calculateCrowdDensity(int numOfPeople) {
 

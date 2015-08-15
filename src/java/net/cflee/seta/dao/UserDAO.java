@@ -1,4 +1,3 @@
-
 package net.cflee.seta.dao;
 
 import java.sql.Connection;
@@ -31,7 +30,6 @@ public class UserDAO {
         PreparedStatement psmt = null;
         ResultSet rs = null;
         try {
-
             psmt = conn.prepareStatement(RETRIEVE);
             psmt.setString(1, username + "@%");
             rs = psmt.executeQuery();
@@ -44,8 +42,7 @@ public class UserDAO {
                 char gender = gend.charAt(0);
                 String school = rs.getString(6);
                 int year = rs.getInt(7);
-                return new User(macAddress, name, password, userEmail, gender,
-                        school, year);
+                return new User(macAddress, name, password, userEmail, gender, school, year);
             }
         } finally {
             ConnectionManager.close(null, psmt, rs);
@@ -64,7 +61,6 @@ public class UserDAO {
 
         PreparedStatement psmt = null;
         try {
-
             psmt = conn.prepareStatement(INSERT);
             for (int i = 0; i < userList.size(); i++) {
                 User user = userList.get(i);
@@ -95,7 +91,6 @@ public class UserDAO {
         ArrayList<User> userList = new ArrayList<User>();
 
         try {
-
             psmt = conn.prepareStatement(SELECT_ALL);
             rs = psmt.executeQuery();
             while (rs.next()) {
@@ -106,8 +101,7 @@ public class UserDAO {
                 char gender = rs.getString(5).charAt(0);
                 String school = rs.getString(6);
                 int year = rs.getInt(7);
-                User user = new User(macAddress, name, password, email, gender,
-                        school, year);
+                User user = new User(macAddress, name, password, email, gender, school, year);
                 userList.add(user);
             }
         } finally {
@@ -138,7 +132,6 @@ public class UserDAO {
         ArrayList<String> macAddressList = new ArrayList<String>();
 
         try {
-
             psmt = conn.prepareStatement(SELECT_ALL);
             rs = psmt.executeQuery();
             while (rs.next()) {

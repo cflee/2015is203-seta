@@ -11,8 +11,7 @@ import net.cflee.seta.entity.LocationUpdate;
 import net.cflee.seta.utility.ConnectionManager;
 
 /**
- * DAO that is responsible for CRUD functions performed in the location update
- * table
+ * DAO that is responsible for CRUD functions performed in the location update table
  */
 public class LocationUpdateDAO {
 
@@ -32,16 +31,13 @@ public class LocationUpdateDAO {
     private static final String SELECT_ALL = "SELECT mac_address, location_id, time_stamp FROM location_update";
 
     /**
-     * Check if a matching LocationUpdate record exists. LocationUpdate records
-     * are a match if the mac address and timestamp match an existing record in
-     * the database.
+     * Check if a matching LocationUpdate record exists. LocationUpdate records are a match if the mac address and
+     * timestamp match an existing record in the database.
      *
-     * @param locationUpdate LocationUpdate object with macAddress and timestamp
-     * to be checked for
+     * @param locationUpdate LocationUpdate object with macAddress and timestamp to be checked for
      * @param conn connection to the database
-     * @return positive integer of row number if there is an existing record and
-     * it was from the current file, 0 if there is an existing record and not
-     * from current file, and -1 if there is no existing record
+     * @return positive integer of row number if there is an existing record and it was from the current file, 0 if
+     * there is an existing record and not from current file, and -1 if there is no existing record
      * @throws SQLException
      */
     public static int checkForExistingRecord(LocationUpdate locationUpdate, Connection conn) throws SQLException {
@@ -75,7 +71,6 @@ public class LocationUpdateDAO {
      * @throws java.sql.SQLException
      */
     public static void insert(LocationUpdate locationUpdate, Connection conn) throws SQLException {
-
         PreparedStatement psmt = null;
 
         try {
@@ -134,7 +129,6 @@ public class LocationUpdateDAO {
      * @throws java.sql.SQLException
      */
     public static void clear(Connection conn) throws SQLException {
-
         PreparedStatement psmt = null;
         try {
 
@@ -153,13 +147,11 @@ public class LocationUpdateDAO {
      * @throws java.sql.SQLException
      */
     public static ArrayList<LocationUpdate> retrieveAll(Connection conn) throws SQLException {
-
         PreparedStatement psmt = null;
         ResultSet rs = null;
         ArrayList<LocationUpdate> locationUpdateList = new ArrayList<LocationUpdate>();
 
         try {
-
             psmt = conn.prepareStatement(SELECT_ALL);
             rs = psmt.executeQuery();
             while (rs.next()) {

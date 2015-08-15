@@ -20,10 +20,8 @@ public class AppDAO {
     private static final String RETRIEVE
             = "SELECT * FROM app "
             + "WHERE app_id = ?";
-    private static final String RETRIEVE_ALL_LOCATION_IDS
+    private static final String RETRIEVE_ALL_APP_IDS
             = "SELECT app_id FROM app";
-    private static final String SELECT_ALL
-            = "SELECT app_id, app_name, app_category FROM location";
 
     /**
      * To check if the location id is valid
@@ -63,7 +61,7 @@ public class AppDAO {
         PreparedStatement psmt = null;
         ResultSet rs = null;
         try {
-            psmt = conn.prepareStatement(RETRIEVE_ALL_LOCATION_IDS);
+            psmt = conn.prepareStatement(RETRIEVE_ALL_APP_IDS);
             rs = psmt.executeQuery();
             while (rs.next()) {
                 resultList.add(rs.getInt(1));

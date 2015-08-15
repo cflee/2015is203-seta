@@ -9,7 +9,7 @@ public class Location {
     private String semanticPlace;
 
     /**
-     * Contruct a location object with locationId and semantic place
+     * Construct a location object with locationId and semantic place
      *
      * @param locationId
      * @param semanticPlace

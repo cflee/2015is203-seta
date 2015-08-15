@@ -1,7 +1,7 @@
-
 package net.cflee.seta.entity;
 
 public class App {
+
     private int appId;
     private String name;
     private String category;

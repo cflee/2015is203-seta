@@ -1,4 +1,3 @@
-
 package net.cflee.seta.entity;
 
 public class User {
@@ -12,8 +11,7 @@ public class User {
     private int year;
 
     /**
-     * Construct an user object with macAddress, name, password, email, gender,
-     * school, year
+     * Construct an user object with macAddress, name, password, email, gender, school, year
      *
      * @param macAddress
      * @param name

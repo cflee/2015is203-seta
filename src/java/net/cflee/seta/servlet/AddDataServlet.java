@@ -25,7 +25,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-@WebServlet(name = "AddDataServlet", urlPatterns = { "/admin/add" })
+@WebServlet(name = "AddDataServlet", urlPatterns = {"/admin/add"})
 public class AddDataServlet extends HttpServlet {
 
     /**
@@ -37,9 +37,7 @@ public class AddDataServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request,
-            HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // don't bother checking for auth, just redirect
         response.sendRedirect("/admin");
     }
@@ -53,9 +51,7 @@ public class AddDataServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request,
-            HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
@@ -70,10 +66,8 @@ public class AddDataServlet extends HttpServlet {
         DiskFileItemFactory factory = new DiskFileItemFactory();
 
         // Configure a repository (to ensure a secure temp location is used)
-        ServletContext servletContext = this.getServletConfig().
-                getServletContext();
-        File repository = (File) servletContext.getAttribute(
-                "javax.servlet.context.tempdir");
+        ServletContext servletContext = this.getServletConfig().getServletContext();
+        File repository = (File) servletContext.getAttribute("javax.servlet.context.tempdir");
         factory.setRepository(repository);
 
         // Create a new file upload handler
@@ -90,8 +84,7 @@ public class AddDataServlet extends HttpServlet {
 
             while (iter.hasNext()) {
                 FileItem item = iter.next();
-                if (!item.isFormField() && item.getFieldName().equals(
-                        "bootstrap-file")) {
+                if (!item.isFormField() && item.getFieldName().equals("bootstrap-file")) {
 
                     File tempFile = File.createTempFile("temp", null);
                     item.write(tempFile);
@@ -105,40 +98,27 @@ public class AddDataServlet extends HttpServlet {
                         conn = ConnectionManager.getConnection();
 
                         if (demographics != null) {
-                            demographicsResult = BootstrapController.
-                                    processDemographicsFile(
-                                            zipFile.getInputStream(
-                                                    demographics),
-                                            "demographics.csv", conn);
+                            demographicsResult = BootstrapController.processDemographicsFile(zipFile.getInputStream(
+                                    demographics), "demographics.csv", conn);
                         }
                         if (app != null) {
-                            appResult = BootstrapController.processAppFile(
-                                    zipFile.getInputStream(app),
-                                    "app.csv", conn);
+                            appResult = BootstrapController.processAppFile(zipFile.getInputStream(app), "app.csv", conn);
                         }
 
                         if (location != null) {
-                            locationResult = BootstrapController.
-                                    processLocationFile(zipFile.getInputStream(
-                                                    location), "location.csv",
-                                            conn);
+                            locationResult = BootstrapController.processLocationFile(zipFile.getInputStream(location),
+                                    "location.csv", conn);
                         }
 
                         request.setAttribute("displayResult", true);
-                        request.setAttribute("demographicsFile",
-                                demographicsResult);
+                        request.setAttribute("demographicsFile", demographicsResult);
                         request.setAttribute("appFile", appResult);
                         request.setAttribute("locationFile", locationResult);
-                        request.getRequestDispatcher(
-                                "/WEB-INF/jsp/admin-bootstrap.jsp").
-                                forward(request, response);
+                        request.getRequestDispatcher("/WEB-INF/jsp/admin-bootstrap.jsp").forward(request, response);
 
                     } catch (SQLException e) {
-                        request.setAttribute("errorMessage",
-                                "SQL error: " + e.getMessage());
-                        request.getRequestDispatcher(
-                                "/WEB-INF/jsp/errorPage.jsp").forward(request,
-                                        response);
+                        request.setAttribute("errorMessage", "SQL error: " + e.getMessage());
+                        request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(request, response);
                     }
 
                 }
@@ -146,21 +126,17 @@ public class AddDataServlet extends HttpServlet {
 
         } catch (FileUploadException e) {
             request.setAttribute("errorMessage", "Unable to upload file!");
-            request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(
-                    request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(request, response);
         } catch (ZipException e) {
             request.setAttribute("errorMessage", "No zip file found!");
-            request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(
-                    request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(request, response);
         } catch (IOException e) {
             request.setAttribute("errorMessage", "IO Error");
-            request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(
-                    request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(request, response);
         } catch (Exception e) {
             // catch for file item.write() method
             request.setAttribute("errorMessage", "Exception Error");
-            request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(
-                    request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(request, response);
         } finally {
             ConnectionManager.close(conn, null, null);
         }

@@ -1,11 +1,9 @@
 package net.cflee.seta.entity;
 
 /**
- * Container to store the rank #, semantic place name, and count of people for
- * Top-k use cases.
+ * Container to store the rank #, semantic place name, and count of people for Top-k use cases.
  *
- * These include Top-k Popular Places, Top-k Next Places, and their respective
- * grouped variants.
+ * These include Top-k Popular Places, Top-k Next Places, and their respective grouped variants.
  */
 public class TopKResult implements Comparable<TopKResult> {
 
@@ -14,11 +12,9 @@ public class TopKResult implements Comparable<TopKResult> {
     private int count;
 
     /**
-     * Constructs a TopKResult to store a single 'row' of data, with default
-     * rank.
+     * Constructs a TopKResult to store a single 'row' of data, with default rank.
      *
-     * The default rank is 0. This should be used when the rank number is to be
-     * determined later.
+     * The default rank is 0. This should be used when the rank number is to be determined later.
      *
      * @param semanticPlace name of semantic place
      * @param count number of people in this semantic place
@@ -78,8 +74,7 @@ public class TopKResult implements Comparable<TopKResult> {
      * Natural order: email ascending, and mac address ascending
      *
      * @param that LocationUpdate to be compared against
-     * @return -1 if this object should be before that, +1 if this object should
-     * be after that, and 0 when they are tied
+     * @return -1 if this object should be before that, +1 if this object should be after that, and 0 when they are tied
      */
     @Override
     public int compareTo(TopKResult topKResult) {
