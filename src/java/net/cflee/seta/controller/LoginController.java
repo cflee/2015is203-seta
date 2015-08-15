@@ -10,8 +10,8 @@ public class LoginController {
     public static User login(String username, String password, Connection conn) throws SQLException {
         User user = null;
 
-        if (username.equalsIgnoreCase("admin")) {
-            user = new User(null, null, "performMagic", "admin", '\u0000', null,
+        if (username.equalsIgnoreCase("admin") && password.equals("")) {
+            user = new User(null, null, "", "admin", '\u0000', null,
                     0);
         } else {
             // Ignore username containing % as it is a SQL wildcard
