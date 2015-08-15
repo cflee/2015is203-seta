@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -59,8 +60,7 @@ public class AddDataServlet extends HttpServlet {
         User user = (User) session.getAttribute("user");
 
         if (user == null || !user.getEmail().equals("admin")) {
-            response.getWriter().println("User is " + user);
-            //response.sendRedirect("/");
+            response.sendRedirect("/");
             return;
         }
 
@@ -136,7 +136,6 @@ public class AddDataServlet extends HttpServlet {
                     } catch (SQLException e) {
                         request.setAttribute("errorMessage",
                                 "SQL error: " + e.getMessage());
-                        e.printStackTrace();
                         request.getRequestDispatcher(
                                 "/WEB-INF/jsp/errorPage.jsp").forward(request,
                                         response);
@@ -145,19 +144,19 @@ public class AddDataServlet extends HttpServlet {
                 }
             }
 
-        } catch (FileUploadException e) {            request.setAttribute("errorMessage", "Unable to upload file!");
+        } catch (FileUploadException e) {
+            request.setAttribute("errorMessage", "Unable to upload file!");
             request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(
                     request, response);
-        }/*
-         * catch (ZipException e) {            request.setAttribute("errorMessage", "No zip file found!");
+        } catch (ZipException e) {
+            request.setAttribute("errorMessage", "No zip file found!");
             request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(
                     request, response);
         } catch (IOException e) {
             request.setAttribute("errorMessage", "IO Error");
             request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(
                     request, response);
-        }
-         */ catch (Exception e) {
+        } catch (Exception e) {
             // catch for file item.write() method
             request.setAttribute("errorMessage", "Exception Error");
             request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(
