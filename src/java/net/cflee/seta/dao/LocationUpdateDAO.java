@@ -5,9 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import net.cflee.seta.entity.HeatmapResult;
 import net.cflee.seta.entity.LocationUpdate;
 import net.cflee.seta.utility.ConnectionManager;
+import net.cflee.seta.utility.DateUtility;
 
 /**
  * DAO that is responsible for CRUD functions performed in the location update table
@@ -30,7 +33,27 @@ public class LocationUpdateDAO {
             + "WHERE mac_address = ? "
             + "AND time_stamp = ? ";
     private static final String CLEAR_ROW_NUMBERS = "UPDATE location_update SET row_number = 0";
-
+    private static final String SMARTPHONE_USAGE_HEATMAP
+            = "SELECT location.semantic_place, COUNT(location_update.mac_address) AS num_of_users "
+            + "FROM location_update "
+            + "INNER JOIN "
+            + "( "
+            + "    SELECT mac_address, MAX(time_stamp) AS latest_timestamp "
+            + "    FROM location_update "
+            + "    WHERE time_stamp >= ? "
+            + "    AND time_stamp < ? "
+            + "    AND mac_address IN "
+            + "    ( "
+            + "        SELECT DISTINCT mac_address "
+            + "        FROM app_update "
+            + "        WHERE time_stamp >= ? "
+            + "        AND time_stamp < ? "
+            + "    ) "
+            + "    GROUP BY mac_address "
+            + ") AS m ON location_update.mac_address = m.mac_address AND location_update.time_stamp = m.latest_timestamp "
+            + "RIGHT OUTER JOIN location ON location_update.location_id = location.location_id "
+            + "WHERE location.semantic_place LIKE ? "
+            + "GROUP BY location.semantic_place ";
     /**
      * Check if a matching LocationUpdate record exists. LocationUpdate records are a match if the mac address and
      * timestamp match an existing record in the database.
@@ -146,6 +169,44 @@ public class LocationUpdateDAO {
         } finally {
             ConnectionManager.close(null, psmt, null);
         }
+    }
+
+    public static ArrayList<HeatmapResult> getSmartphoneUsageHeatmapResult(Date chosenDate, int floor, Connection conn)
+            throws SQLException {
+        Date startDate = DateUtility.addMinutes(chosenDate, -15);
+
+        String level = null;
+
+        if (floor == 0) {
+            level = "SMUSISB1";
+        } else {
+            level = "SMUSISL" + floor;
+        }
+
+        PreparedStatement psmt = null;
+        ResultSet rs = null;
+        ArrayList<HeatmapResult> heatmapResultList = new ArrayList<HeatmapResult>();
+
+        try {
+
+            psmt = conn.prepareStatement(SMARTPHONE_USAGE_HEATMAP);
+            psmt.setTimestamp(1, new Timestamp(startDate.getTime()));
+            psmt.setTimestamp(2, new Timestamp(chosenDate.getTime()));
+            psmt.setTimestamp(3, new Timestamp(startDate.getTime()));
+            psmt.setTimestamp(4, new Timestamp(chosenDate.getTime()));
+            psmt.setString(5, level + "%");
+            rs = psmt.executeQuery();
+
+            while (rs.next()) {
+                String semanticPlace = rs.getString(1);
+                int numOfUsers = rs.getInt(2);
+                HeatmapResult result = new HeatmapResult(semanticPlace, numOfUsers);
+                heatmapResultList.add(result);
+            }
+        } finally {
+            ConnectionManager.close(null, psmt, rs);
+        }
+        return heatmapResultList;
     }
 
     /**

@@ -62,18 +62,16 @@ public class HeatmapResult {
 
         if (numOfPeople == 0) {
             return 0;
-        } else if (numOfPeople <= 2) {
+        } else if (numOfPeople <= 3) {
             return 1;
-        } else if (numOfPeople <= 5) {
+        } else if (numOfPeople <= 7) {
             return 2;
-        } else if (numOfPeople <= 10) {
+        } else if (numOfPeople <= 13) {
             return 3;
         } else if (numOfPeople <= 20) {
             return 4;
-        } else if (numOfPeople <= 30) {
-            return 5;
         } else {
-            return 6;
+            return 5;
         }
     }
 }
