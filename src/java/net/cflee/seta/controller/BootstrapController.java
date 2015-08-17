@@ -8,7 +8,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,6 +26,7 @@ import net.cflee.seta.entity.FileValidationResult;
 import net.cflee.seta.entity.Location;
 import net.cflee.seta.entity.LocationUpdate;
 import net.cflee.seta.entity.User;
+import net.cflee.seta.utility.DateUtility;
 
 /**
  * A controller class that provides services to the Servlet layer, to validate and process the various CSV data files
@@ -427,21 +427,9 @@ public class BootstrapController {
                 }
 
                 // validation for timestamp
-                // create the date format to check against
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
                 try {
                     // check if the timestampString fits with the pattern
-                    timestamp = simpleDateFormat.parse(timestampString);
-
-                    // create a string representation of timestamp
-                    String formattedTimestamp = simpleDateFormat.format(timestamp);
-
-                    // validation for the formattedTimestamp
-                    if (!formattedTimestamp.equals(timestampString)) {
-                        //if formattedTimestamp is different from timeStampString
-                        errorMessageList.add("invalid timestamp");
-                    }
+                    timestamp = DateUtility.parseDateString(timestampString);
                 } catch (ParseException e) {
                     // if the timestamp could not be parsed by the date format
                     errorMessageList.add("invalid timestamp");
@@ -701,22 +689,9 @@ public class BootstrapController {
                 }
 
                 // validation for timestamp
-                // create the date format to check against
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
                 try {
                     // check if the timestampString fits with the pattern
-                    timestamp = simpleDateFormat.parse(timestampString);
-
-                    // create a string representation of timestamp
-                    String formattedTimestamp = simpleDateFormat.format(timestamp);
-
-                    // validation for the formattedTimestamp
-                    if (!formattedTimestamp.equals(timestampString)) {
-                        //if formattedTimestamp is different from timeStampString
-                        errorMessageList.add("invalid timestamp");
-                    }
-
+                    timestamp = DateUtility.parseDateString(timestampString);
                 } catch (ParseException e) {
                     // if the timestamp could not be parsed by the date format
                     errorMessageList.add("invalid timestamp");
@@ -876,22 +851,9 @@ public class BootstrapController {
                 }
 
                 // validation for timestamp
-                // create the date format to check against
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
                 try {
                     // check if the timestampString fits with the pattern
-                    timestamp = simpleDateFormat.parse(timestampString);
-
-                    // create a string representation of timestamp
-                    String formattedTimestamp = simpleDateFormat.format(timestamp);
-
-                    // validation for the formattedTimestamp
-                    if (!formattedTimestamp.equals(timestampString)) {
-                        //if formattedTimestamp is different from timeStampString
-                        errorMessageList.add("invalid timestamp");
-                    }
-
+                    timestamp = DateUtility.parseDateString(timestampString);
                 } catch (ParseException e) {
                     // if the timestamp could not be parsed by the date format
                     errorMessageList.add("invalid timestamp");
