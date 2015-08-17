@@ -152,8 +152,10 @@ public class BootstrapServlet extends HttpServlet {
                                     "location.csv", conn);
 
                             // process location-delete.csv if necessary
-                            locationDeleteResult = BootstrapController.processLocationDeleteFile(
-                                    zipFile.getInputStream(locationDelete), "location-delete.csv", conn);
+                            if (locationDelete != null) {
+                                locationDeleteResult = BootstrapController.processLocationDeleteFile(
+                                        zipFile.getInputStream(locationDelete), "location-delete.csv", conn);
+                            }
                         }
 
                         request.setAttribute("displayResult", true);
@@ -185,6 +187,7 @@ public class BootstrapServlet extends HttpServlet {
         } catch (Exception e) {
             // catch for file item.write() method
             request.setAttribute("errorMessage", "Exception Error");
+            e.printStackTrace();
             request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(request, response);
         } finally {
             ConnectionManager.close(conn, null, null);
