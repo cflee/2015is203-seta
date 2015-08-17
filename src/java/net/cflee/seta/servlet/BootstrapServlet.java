@@ -141,6 +141,7 @@ public class BootstrapServlet extends HttpServlet {
                              0, new ArrayList<FileValidationError>());
                              */
                         } else {
+                            BootstrapController.resetAllBasicData(conn);
                             BootstrapController.resetAllLocationData(conn);
                             locationLookupResult = BootstrapController.processLocationLookUpFile(zipFile.getInputStream(
                                     locationLookup), "location-lookup.csv", conn);
