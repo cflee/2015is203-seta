@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -19,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import net.cflee.seta.controller.BootstrapController;
 import net.cflee.seta.entity.DeleteFileValidationResult;
-import net.cflee.seta.entity.FileValidationError;
 import net.cflee.seta.entity.FileValidationResult;
 import net.cflee.seta.entity.User;
 import net.cflee.seta.utility.ConnectionManager;
@@ -91,7 +89,6 @@ public class BootstrapServlet extends HttpServlet {
             while (iter.hasNext()) {
                 FileItem item = iter.next();
                 if (!item.isFormField() && item.getFieldName().equals("bootstrap-file")) {
-
                     File tempFile = File.createTempFile("temp", null);
                     item.write(tempFile);
 
@@ -106,46 +103,18 @@ public class BootstrapServlet extends HttpServlet {
                     try {
                         conn = ConnectionManager.getConnection();
 
-                        if (appLookup != null) {
-                            // basic bootstrap
-                            BootstrapController.resetAllBasicData(conn);
-                            demographicsResult = BootstrapController.processDemographicsFile(zipFile.getInputStream(
-                                    demographics), "demographics.csv", conn);
-                            appLookupResult = BootstrapController
-                                    .processAppLookupFile(zipFile.getInputStream(appLookup), "app-lookup.csv", conn);
-                            appResult = BootstrapController.processAppFile(zipFile.getInputStream(app), "app.csv", conn);
-                        } else {
-                            // basic add data
-                            if (demographics == null) {
-                                /*
-                                 * demographicsResult = new
-                                 * FileValidationResult( 0, new ArrayList<FileValidationError>());
-                                 */
-                            } else {
-                                demographicsResult = BootstrapController.processDemographicsFile(zipFile.getInputStream(
-                                        demographics), "demographics.csv", conn);
-                            }
-                            appLookupResult = new FileValidationResult(0, new ArrayList<FileValidationError>());
-                            if (app == null) {
-                                /*
-                                 * appResult = new FileValidationResult( 0, new ArrayList<FileValidationError>());
-                                 */
-                            } else {
-                                appResult = BootstrapController.processAppFile(zipFile.getInputStream(app), "app.csv",
-                                        conn);
-                            }
-                        }
+                        // basic bootstrap
+                        // but clear out location data as well
+                        BootstrapController.resetAllBasicData(conn);
+                        BootstrapController.resetAllLocationData(conn);
+                        demographicsResult = BootstrapController.processDemographicsFile(zipFile.getInputStream(
+                                demographics), "demographics.csv", conn);
+                        appLookupResult = BootstrapController
+                                .processAppLookupFile(zipFile.getInputStream(appLookup), "app-lookup.csv", conn);
+                        appResult = BootstrapController.processAppFile(zipFile.getInputStream(app), "app.csv", conn);
 
                         // location bootstrap
-                        if (locationLookup == null) {
-                            /*
-                             * locationLookupResult = new FileValidationResult(                                    0, new ArrayList<FileValidationError>());
-                             locationResult = new FileValidationResult(
-                             0, new ArrayList<FileValidationError>());
-                             */
-                        } else {
-                            BootstrapController.resetAllBasicData(conn);
-                            BootstrapController.resetAllLocationData(conn);
+                        if (locationLookup != null) {
                             locationLookupResult = BootstrapController.processLocationLookUpFile(zipFile.getInputStream(
                                     locationLookup), "location-lookup.csv", conn);
                             locationResult = BootstrapController.processLocationFile(zipFile.getInputStream(location),
@@ -171,7 +140,6 @@ public class BootstrapServlet extends HttpServlet {
                         request.setAttribute("errorMessage", "SQL error: " + e.getMessage());
                         request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(request, response);
                     }
-
                 }
             }
 
@@ -187,7 +155,6 @@ public class BootstrapServlet extends HttpServlet {
         } catch (Exception e) {
             // catch for file item.write() method
             request.setAttribute("errorMessage", "Exception Error");
-            e.printStackTrace();
             request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(request, response);
         } finally {
             ConnectionManager.close(conn, null, null);
