@@ -21,6 +21,7 @@ import net.cflee.seta.dao.LocationUpdateDAO;
 import net.cflee.seta.dao.UserDAO;
 import net.cflee.seta.entity.App;
 import net.cflee.seta.entity.AppUpdate;
+import net.cflee.seta.entity.DeleteFileValidationResult;
 import net.cflee.seta.entity.FileValidationError;
 import net.cflee.seta.entity.FileValidationResult;
 import net.cflee.seta.entity.Location;
@@ -789,6 +790,151 @@ public class BootstrapController {
         Collections.sort(errorList);
 
         return new FileValidationResult(numOfValidRecords, errorList);
+    }
+
+    /**
+     * Processes an InputStream of location-delete.csv data, validates it, and then passes valid records to
+     * LocationUpdateDAO for deletion.
+     *
+     * @param inputStream InputStream of location-delete.csv data
+     * @param filename filename to use in FileValidationErrors
+     * @param conn connection object to talk to jdbc
+     * @return FileValidationResult
+     * @throws java.io.IOException if InputStream cannot be read
+     * @throws java.sql.SQLException
+     */
+    public static DeleteFileValidationResult processLocationDeleteFile(InputStream inputStream, String filename,
+            Connection conn)
+            throws IOException, SQLException {
+        CsvReader location = new CsvReader(new InputStreamReader(inputStream), ',');
+        ArrayList<FileValidationError> errorList = new ArrayList<FileValidationError>();
+
+        // Trim white space
+        location.setTrimWhitespace(true);
+
+        // Read the first record of data as column headers.
+        location.readHeaders();
+
+        // counter for row number
+        // used for FileValidationError's lineNumber attribute
+        // starts with 2 because 1 is the header
+        int rowNumber = 2;
+
+        // counter for valid records
+        int numOfDeletedRecords = 0;
+        int numOfUnmatchedRecords = 0;
+
+        // set SQL connection autocommit = false
+        conn.setAutoCommit(false);
+
+        // retrieve the list of all the (valid) location IDs for validation
+        ArrayList<Integer> allLocationIds = LocationDAO.getAllLocationIds(conn);
+
+        // iterate through all records in the file
+        while (location.readRecord()) {
+
+            ArrayList<String> errorMessageList = new ArrayList<String>();
+
+            String timestampString = location.get("timestamp");
+            String macAddress = location.get("mac-address").toLowerCase();
+            String locationIdString = location.get("location-id");
+            int locationId = 0;
+            Date timestamp = null;
+
+            // test for blank field
+            if (timestampString.isEmpty()) {
+                errorMessageList.add("timestamp is blank");
+            }
+
+            if (macAddress.isEmpty()) {
+                errorMessageList.add("mac-address is blank");
+            }
+
+            if (locationIdString.isEmpty()) {
+                errorMessageList.add("location-id is blank");
+            }
+
+            // check if there are any blank fields
+            if (errorMessageList.isEmpty()) {
+                // none of the fields are blanks, validate other fields
+
+                //validation for location-id
+                try {
+                    locationId = Integer.parseInt(locationIdString);
+
+                    if (!allLocationIds.contains(locationId)) {
+                        errorMessageList.add("invalid location");
+                    }
+                } catch (NumberFormatException e) {
+                    // if the location-id is not an integer
+                    errorMessageList.add("invalid location");
+                }
+
+                //validation for mac-address
+                if (!isValidMacAddress(macAddress)) {
+                    errorMessageList.add("invalid mac address");
+                }
+
+                // validation for timestamp
+                // create the date format to check against
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                try {
+                    // check if the timestampString fits with the pattern
+                    timestamp = simpleDateFormat.parse(timestampString);
+
+                    // create a string representation of timestamp
+                    String formattedTimestamp = simpleDateFormat.format(timestamp);
+
+                    // validation for the formattedTimestamp
+                    if (!formattedTimestamp.equals(timestampString)) {
+                        //if formattedTimestamp is different from timeStampString
+                        errorMessageList.add("invalid timestamp");
+                    }
+
+                } catch (ParseException e) {
+                    // if the timestamp could not be parsed by the date format
+                    errorMessageList.add("invalid timestamp");
+                }
+
+                //validation for duplicate row
+                if (errorMessageList.isEmpty()) {
+
+                    LocationUpdate locationUpdate = new LocationUpdate(macAddress, timestamp, locationId, rowNumber);
+
+                    // TODO: check if need to match location id to be considered for deletion
+                    // if yes, create another DAO Method (and possibly rename this one)
+                    int existingRowNo = LocationUpdateDAO.checkForExistingRecord(locationUpdate, conn);
+                    if (existingRowNo != -1) {
+                        // there is a duplicate LocationUpdate that matches
+                        LocationUpdateDAO.delete(locationUpdate, conn);
+                        numOfDeletedRecords++;
+                    } else {
+                        // no existing LocationUpdate that matches
+                        numOfUnmatchedRecords++;
+                    }
+                }
+            }
+            if (!errorMessageList.isEmpty()) {
+                errorList.add(new FileValidationError(filename, rowNumber, errorMessageList));
+            }
+            rowNumber++;
+        }
+
+        // done, commit and set SQL connection autocommit = true
+        conn.commit();
+        conn.setAutoCommit(true);
+
+        // finished reading all records
+        location.close();
+
+        // sort the errorList to ensure that the FileValidationErrors are
+        // in ascending order of line number. they may be out of order due to
+        // tacking on the errors for rows that previously did not have any
+        // errors, but were found to be duplicate rows later
+        Collections.sort(errorList);
+
+        return new DeleteFileValidationResult(numOfDeletedRecords, numOfUnmatchedRecords, errorList);
     }
 
     /**

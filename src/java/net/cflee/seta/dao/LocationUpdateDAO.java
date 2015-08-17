@@ -17,6 +17,9 @@ public class LocationUpdateDAO {
     private static final String INSERT = "INSERT INTO location_update "
             + "(mac_address, location_id, time_stamp, row_number) "
             + "VALUES (?, ?, ?, ?)";
+    private static final String DELETE = "DELETE FROM location_update "
+            + "WHERE mac_address = ? "
+            + "AND time_stamp = ? ";
     private static final String TRUNCATE = "TRUNCATE TABLE location_update";
     private static final String CHECK_FOR_EXISTING_RECORD = "SELECT row_number FROM location_update "
             + "WHERE mac_address = ? "
@@ -80,6 +83,31 @@ public class LocationUpdateDAO {
             psmt.setInt(2, locationUpdate.getLocationId());
             psmt.setTimestamp(3, timeStamp);
             psmt.setInt(4, locationUpdate.getRowNo());
+            psmt.executeUpdate();
+        } finally {
+            ConnectionManager.close(null, psmt, null);
+        }
+    }
+
+    /**
+     * Delete the location update from the location update table
+     *
+     * @param locationUpdate the location update object to be inserted
+     * @param conn connection to the database
+     * @throws java.sql.SQLException
+     */
+    public static void delete(LocationUpdate locationUpdate, Connection conn) throws SQLException {
+        PreparedStatement psmt = null;
+
+        try {
+            psmt = conn.prepareStatement(DELETE);
+
+            psmt.setString(1, locationUpdate.getMacAddress());
+            Date utilDate = locationUpdate.getTimestamp();
+            Timestamp timeStamp = new Timestamp(utilDate.getTime());
+            // TODO: check if need to factor this in for safety
+            //psmt.setInt(2, locationUpdate.getLocationId());
+            psmt.setTimestamp(2, timeStamp);
             psmt.executeUpdate();
         } finally {
             ConnectionManager.close(null, psmt, null);

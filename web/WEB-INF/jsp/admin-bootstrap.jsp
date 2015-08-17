@@ -1,3 +1,4 @@
+<%@page import="net.cflee.seta.entity.DeleteFileValidationResult"%>
 <%@page import="net.cflee.seta.entity.FileValidationError"%>
 <%@page import="net.cflee.seta.entity.FileValidationResult"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -37,6 +38,8 @@
                     getAttribute("locationLookupFile");
             FileValidationResult locationFile = (FileValidationResult) request.
                     getAttribute("locationFile");
+            DeleteFileValidationResult locationDeleteFile = (DeleteFileValidationResult) request
+                        .getAttribute("locationDeleteFile");
 
     if (request.getAttribute("displayResult") != null) {
         %>
@@ -48,6 +51,7 @@
             <% if (appFile != null) {%>app.csv: <%= appFile.getNumOfValidRows()%><br><% } %>
             <% if (locationLookupFile != null) {%>location-lookup.csv: <%= locationLookupFile.getNumOfValidRows()%><br><% } %>
             <% if (locationFile != null) {%>location.csv: <%= locationFile.getNumOfValidRows()%><br><% } %>
+            <% if (locationDeleteFile != null) {%>location-delete.csv: <%= locationDeleteFile.getNumOfDeletedRows()%> deleted, <%= locationDeleteFile.getNumOfUnmatchedRows()%> not found<br><% } %>
         </p>
         <table>
             <thead>
@@ -56,78 +60,93 @@
             <tbody>
                 <% if (demographicsFile != null) {
                         for (FileValidationError error : demographicsFile.
-                            getErrors()) {%>
-                    <tr>
-                        <td><%= error.getFilename()%></td>
-                        <td><%= error.getLineNumber()%></td>
-                        <td>
-                            <% for (String errorMessage : error.
+                                    getErrors()) {%>
+                <tr>
+                    <td><%= error.getFilename()%></td>
+                    <td><%= error.getLineNumber()%></td>
+                    <td>
+                <% for (String errorMessage : error.
                                     getMessages()) {%>
-                            <%= errorMessage%> |
-                            <% } %>
-                        </td>
-                    </tr>
-                    <% }
+                <%= errorMessage%> |
+                <% } %>
+                    </td>
+                </tr>
+                <% }
                         } %>
-                    <% if (appLookupFile != null) {
-                            for (FileValidationError error : appLookupFile.
-                            getErrors()) {%>
-                    <tr>
-                        <td><%= error.getFilename()%></td>
-                        <td><%= error.getLineNumber()%></td>
-                        <td>
-                            <% for (String errorMessage : error.
+                        <% if (appLookupFile != null) {
+                        for (FileValidationError error : appLookupFile.
+                                getErrors()) {%>
+                        <tr>
+                            <td><%= error.getFilename()%></td>
+                            <td><%= error.getLineNumber()%></td>
+                            <td>
+                                <% for (String errorMessage : error.
                                         getMessages()) {%>
-                            <%= errorMessage%> |
-                            <% } %>
-                        </td>
-                    </tr>
-                    <% }
+                                        <%= errorMessage%> |
+                                        <% } %>
+                    </td>
+                </tr>
+                <% }
                         } %>
-                    <% if (appFile != null) {
-                            for (FileValidationError error : appFile.
-                            getErrors()) {%>
-                    <tr>
-                        <td><%= error.getFilename()%></td>
-                        <td><%= error.getLineNumber()%></td>
-                        <td>
-                            <% for (String errorMessage : error.
+                        <% if (appFile != null) {
+                        for (FileValidationError error : appFile.
+                                getErrors()) {%>
+                        <tr>
+                            <td><%= error.getFilename()%></td>
+                            <td><%= error.getLineNumber()%></td>
+                            <td>
+                                <% for (String errorMessage : error.
                                         getMessages()) {%>
-                            <%= errorMessage%> |
-                            <% } %>
-                        </td>
-                    </tr>
-                    <% }
+                                        <%= errorMessage%> |
+                                        <% } %>
+                    </td>
+                </tr>
+                <% }
                         } %>
-                    <% if (locationLookupFile != null) {
-                            for (FileValidationError error : locationLookupFile.
-                                    getErrors()) {%>
-                    <tr>
-                        <td><%= error.getFilename()%></td>
-                        <td><%= error.getLineNumber()%></td>
-                        <td>
-                            <% for (String errorMessage : error.
+                        <% if (locationLookupFile != null) {
+                                for (FileValidationError error : locationLookupFile.
+                                        getErrors()) {%>
+                        <tr>
+                            <td><%= error.getFilename()%></td>
+                            <td><%= error.getLineNumber()%></td>
+                            <td>
+                                <% for (String errorMessage : error.
                                         getMessages()) {%>
-                            <%= errorMessage%> |
-                            <% } %>
-                        </td>
-                    </tr>
-                    <% }
+                                        <%= errorMessage%> |
+                                        <% } %>
+                    </td>
+                </tr>
+                <% }
                         } %>
-                    <% if (locationFile != null) {
-                            for (FileValidationError error : locationFile.
-                                    getErrors()) {%>
-                    <tr>
-                        <td><%= error.getFilename()%></td>
-                        <td><%= error.getLineNumber()%></td>
-                        <td>
-                            <% for (String errorMessage : error.
+                        <% if (locationFile != null) {
+                                for (FileValidationError error : locationFile.
+                                        getErrors()) {%>
+                        <tr>
+                            <td><%= error.getFilename()%></td>
+                            <td><%= error.getLineNumber()%></td>
+                            <td>
+                                <% for (String errorMessage : error.
                                         getMessages()) {%>
-                            <%= errorMessage%> |
-                            <% } %>
-                        </td>
-                    </tr>
-                    <% }
+                                        <%= errorMessage%> |
+                                        <% } %>
+                    </td>
+                </tr>
+                <% }
+                        } %>
+                        <% if (locationDeleteFile != null) {
+                        for (FileValidationError error : locationDeleteFile.
+                                getErrors()) {%>
+                        <tr>
+                            <td><%= error.getFilename()%></td>
+                            <td><%= error.getLineNumber()%></td>
+                            <td>
+                                <% for (String errorMessage : error.
+                                    getMessages()) {%>
+                                <%= errorMessage%> |
+                                <% } %>
+                            </td>
+                        </tr>
+                        <% }
                         } %>
             </tbody>
         </table>

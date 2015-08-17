@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import net.cflee.seta.controller.BootstrapController;
+import net.cflee.seta.entity.DeleteFileValidationResult;
 import net.cflee.seta.entity.FileValidationError;
 import net.cflee.seta.entity.FileValidationResult;
 import net.cflee.seta.entity.User;
@@ -85,6 +86,7 @@ public class BootstrapServlet extends HttpServlet {
             FileValidationResult appResult = null;
             FileValidationResult locationLookupResult = null;
             FileValidationResult locationResult = null;
+            DeleteFileValidationResult locationDeleteResult = null;
 
             while (iter.hasNext()) {
                 FileItem item = iter.next();
@@ -99,6 +101,7 @@ public class BootstrapServlet extends HttpServlet {
                     ZipEntry app = zipFile.getEntry("app.csv");
                     ZipEntry locationLookup = zipFile.getEntry("location-lookup.csv");
                     ZipEntry location = zipFile.getEntry("location.csv");
+                    ZipEntry locationDelete = zipFile.getEntry("location-delete.csv");
 
                     try {
                         conn = ConnectionManager.getConnection();
@@ -147,6 +150,10 @@ public class BootstrapServlet extends HttpServlet {
                                     locationLookup), "location-lookup.csv", conn);
                             locationResult = BootstrapController.processLocationFile(zipFile.getInputStream(location),
                                     "location.csv", conn);
+
+                            // process location-delete.csv if necessary
+                            locationDeleteResult = BootstrapController.processLocationDeleteFile(
+                                    zipFile.getInputStream(locationDelete), "location-delete.csv", conn);
                         }
 
                         request.setAttribute("displayResult", true);
@@ -155,6 +162,7 @@ public class BootstrapServlet extends HttpServlet {
                         request.setAttribute("appFile", appResult);
                         request.setAttribute("locationLookupFile", locationLookupResult);
                         request.setAttribute("locationFile", locationResult);
+                        request.setAttribute("locationDeleteFile", locationDeleteResult);
                         request.getRequestDispatcher("/WEB-INF/jsp/admin-bootstrap.jsp").forward(request, response);
 
                     } catch (SQLException e) {
