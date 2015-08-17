@@ -10,6 +10,7 @@
     </head>
     <body>
         <h1>Admin Page</h1>
+        <a href="/">Back to main page</a>
         <h2>Bootstrap</h2>
         <form action="/admin/bootstrap" method="post" enctype="multipart/form-data">
             <p>
