@@ -29,7 +29,6 @@ public class LocationUpdate implements Comparable<LocationUpdate> {
      * @param macAddress
      * @param timestamp
      * @param locationId
-     * @param email
      * @param rowNo
      */
     public LocationUpdate(String macAddress, Date timestamp, int locationId, int rowNo) {

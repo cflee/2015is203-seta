@@ -29,7 +29,6 @@ public class AppUpdate implements Comparable<AppUpdate> {
      * @param macAddress
      * @param timestamp
      * @param appId
-     * @param email
      * @param rowNo
      */
     public AppUpdate(String macAddress, Date timestamp, int appId, int rowNo) {
