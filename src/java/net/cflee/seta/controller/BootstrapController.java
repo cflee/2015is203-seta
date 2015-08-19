@@ -419,11 +419,12 @@ public class BootstrapController {
                 // validation for mac-address
                 if (!isValidMacAddress(macAddress)) {
                     errorMessageList.add("invalid mac address");
-                }
-
-                // check if there's a matching mac address
-                if (!allMacAddresses.contains(macAddress)) {
-                    errorMessageList.add("no matching mac address");
+                } else {
+                    // valid mac address
+                    // check if there's a matching mac address
+                    if (!allMacAddresses.contains(macAddress)) {
+                        errorMessageList.add("no matching mac address");
+                    }
                 }
 
                 // validation for timestamp
