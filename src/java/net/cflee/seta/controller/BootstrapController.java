@@ -430,7 +430,7 @@ public class BootstrapController {
                 // validation for timestamp
                 try {
                     // check if the timestampString fits with the pattern
-                    timestamp = DateUtility.parseDateString(timestampString);
+                    timestamp = DateUtility.parseDatetimeString(timestampString);
                 } catch (ParseException e) {
                     // if the timestamp could not be parsed by the date format
                     errorMessageList.add("invalid timestamp");
@@ -692,7 +692,7 @@ public class BootstrapController {
                 // validation for timestamp
                 try {
                     // check if the timestampString fits with the pattern
-                    timestamp = DateUtility.parseDateString(timestampString);
+                    timestamp = DateUtility.parseDatetimeString(timestampString);
                 } catch (ParseException e) {
                     // if the timestamp could not be parsed by the date format
                     errorMessageList.add("invalid timestamp");
@@ -854,7 +854,7 @@ public class BootstrapController {
                 // validation for timestamp
                 try {
                     // check if the timestampString fits with the pattern
-                    timestamp = DateUtility.parseDateString(timestampString);
+                    timestamp = DateUtility.parseDatetimeString(timestampString);
                 } catch (ParseException e) {
                     // if the timestamp could not be parsed by the date format
                     errorMessageList.add("invalid timestamp");

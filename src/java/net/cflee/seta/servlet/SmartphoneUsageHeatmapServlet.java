@@ -60,7 +60,7 @@ public class SmartphoneUsageHeatmapServlet extends HttpServlet {
 
             try {
                 conn = ConnectionManager.getConnection();
-                Date date = DateUtility.parseDateString(dateString);
+                Date date = DateUtility.parseDatetimeString(dateString);
                 int floor = Integer.parseInt(floorString);
 
                 ArrayList<HeatmapResult> heatmapResults

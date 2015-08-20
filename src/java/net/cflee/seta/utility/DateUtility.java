@@ -50,7 +50,7 @@ public class DateUtility {
         return cal.getTime();
     }
 
-    public static Date parseDateString(String dateString) throws ParseException {
+    public static Date parseDatetimeString(String dateString) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         // this may directly throw ParseException if string doesn't adhere to format
