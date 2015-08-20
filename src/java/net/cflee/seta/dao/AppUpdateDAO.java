@@ -93,7 +93,7 @@ public class AppUpdateDAO {
      * @param conn
      * @throws SQLException
      */
-    public static void updateLocationId(AppUpdate appUpdate, Connection conn) throws SQLException {
+    public static void updateAppId(AppUpdate appUpdate, Connection conn) throws SQLException {
         PreparedStatement psmt = null;
 
         try {

@@ -470,7 +470,7 @@ public class BootstrapController {
                             }
                             // then update the database with this new location
                             // update's location ID
-                            AppUpdateDAO.updateLocationId(appUpdate, conn);
+                            AppUpdateDAO.updateAppId(appUpdate, conn);
                         }
                     } else {
                         // no existing LocationUpdate that matches
