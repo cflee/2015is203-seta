@@ -5,8 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import net.cflee.seta.entity.AppUpdate;
+import net.cflee.seta.entity.AppUpdateRecord;
 import net.cflee.seta.utility.ConnectionManager;
 
 /**
@@ -26,6 +28,20 @@ public class AppUpdateDAO {
             + "row_number = ? "
             + "WHERE mac_address = ? "
             + "AND time_stamp = ? ";
+    private static final String SELECT_JOIN_AND_FILTER = "SELECT "
+            + "app_update.time_stamp, app_update.mac_address, `user`.name, `user`.gender, `user`.school, `user`.year, "
+            + "`user`.email, app_update.app_id, app.app_name, app.app_category "
+            + "FROM app_update "
+            + "INNER JOIN app ON app_update.app_id = app.app_id "
+            + "INNER JOIN `user` ON app_update.mac_address = `user`.mac_address "
+            + "WHERE app_update.time_stamp >= ? "
+            + "AND app_update.time_stamp < ? "
+            + "AND `user`.gender LIKE ? "
+            + "AND `user`.school LIKE ? "
+            + "AND `user`.year LIKE ? "
+            + "AND app.app_name LIKE ? "
+            + "AND app.app_category LIKE ? "
+            + "ORDER BY app_update.mac_address ASC, app_update.time_stamp ASC ";
     private static final String CLEAR_ROW_NUMBERS = "UPDATE app_update SET row_number = 0";
 
     /**
@@ -107,6 +123,101 @@ public class AppUpdateDAO {
         } finally {
             ConnectionManager.close(null, psmt, null);
         }
+    }
+
+    /**
+     * Retrieve an ArrayList of AppUpdateRecords, which are joined representations of AppUpdates, but with all the
+     * accompanying attributes of the User and the App, to facilitate in-app pivoting.
+     *
+     * @param startDate start date/time, inclusive
+     * @param endDate end date/time, exclusive
+     * @param year optional, set to null to not-filter by year
+     * @param gender optional, set to null to not-filter by year
+     * @param school optional, set to null to not-filter by year
+     * @param appName optional, set to null to not-filter by year
+     * @param appCategory optional, set to null to not-filter by year
+     * @param conn connection to the database
+     * @return ArrayList of AppUpdateRecords
+     * @throws SQLException
+     */
+    public static ArrayList<AppUpdateRecord> retrieveAppUpdates(Date startDate, Date endDate, Integer year,
+            Character gender, String school, String appName, String appCategory, Connection conn) throws SQLException {
+        PreparedStatement psmt = null;
+        ResultSet rs = null;
+        ArrayList<AppUpdateRecord> results = new ArrayList<>();
+
+        try {
+            psmt = conn.prepareStatement(SELECT_JOIN_AND_FILTER);
+            // mandatory parameters
+            psmt.setTimestamp(1, new Timestamp(startDate.getTime()));
+            psmt.setTimestamp(2, new Timestamp(endDate.getTime()));
+            // optional filters. use % wildcard where necessary
+            // TODO: defend against wildcards in the optional String parameters
+            if (gender == null) {
+                psmt.setString(3, "%");
+            } else {
+                psmt.setString(3, String.valueOf(gender));
+            }
+            if (school == null) {
+                psmt.setString(4, "%");
+            } else {
+                psmt.setString(4, school);
+            }
+            if (year == null) {
+                psmt.setString(5, "%");
+            } else {
+                psmt.setInt(5, year);
+            }
+            if (appName == null) {
+                psmt.setString(6, "%");
+            } else {
+                psmt.setString(6, appName);
+            }
+            if (appCategory == null) {
+                psmt.setString(7, "%");
+            } else {
+                psmt.setString(7, appCategory);
+            }
+            rs = psmt.executeQuery();
+
+            // pack into AppUpdateRecords and insert into ArrayList
+            while (rs.next()) {
+                AppUpdateRecord record = new AppUpdateRecord(new Date(rs.getTimestamp(1).getTime()), rs.getString(2),
+                        rs.getString(3), rs.getString(4).charAt(0), rs.getString(5), rs.getInt(6),
+                        rs.getString(7), rs.getInt(8), rs.getString(9), rs.getString(10));
+                results.add(record);
+            }
+
+            // compute the durations for each record, which are 10 seconds by default in their constructor
+            // use old-fashioned for loop as we need to access the n+1 record
+            for (int i = 0; i < results.size(); i++) {
+                AppUpdateRecord current = results.get(i);
+
+                // obtain the next record if it doesn't overrun
+                // if there's no next record, then there's nothing to do
+                if (i + 1 < results.size()) {
+                    AppUpdateRecord next = results.get(i + 1);
+
+                    // check if the next record still belongs to this user
+                    // nothing to do if it isn't
+                    if (current.getMacAddress().equals(next.getMacAddress())) {
+                        // same user, now compute the difference in seconds
+                        // to see if this next AppUpdate is in the same phone use session
+                        // divide by 1000 as the timestamp is in milliseconds
+                        int difference = (int) ((next.getTimestamp().getTime() - current.getTimestamp().getTime())
+                                / 1000);
+                        if (difference <= 120) {
+                            // same phone use session, so update this record's duration
+                            current.setDuration(difference);
+                        }
+                    }
+                }
+            }
+        } finally {
+            ConnectionManager.close(null, psmt, rs);
+        }
+
+        return results;
     }
 
     public static void clearRowNumberRecords(Connection conn) throws SQLException {

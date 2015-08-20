@@ -17,6 +17,15 @@
             <% if (user != null && user.getEmail().equals("admin")) { %><li><a href="/admin">Admin Page</a></li><% }%>
         </ul>
         <% if (user != null) { %>
+        <h2>Basic App Usage Reports</h2>
+        <h3>Breakdown by usage time category</h3>
+        <form action="/report/basic-time-category" method="post">
+            <p>
+                <label>Start date: <input type="text" name="startDate" placeholder="2015-08-01"></label><br>
+                <label>End date: <input type="text" name="endDate" placeholder="2015-08-02"></label><br>
+                <input type="submit" value="Submit">
+            </p>
+        </form>
         <h2>Smartphone Usage Heatmap</h2>
         <form action="/report/smartphone-usage-heatmap" method="post">
             <p>
