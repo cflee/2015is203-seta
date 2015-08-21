@@ -2,7 +2,7 @@ package net.cflee.seta.entity;
 
 import java.util.Date;
 
-public class AppUpdateRecord implements Comparable<AppUpdateRecord> {
+public class AppUpdateRecord {
 
     private Date timestamp;
     private String macAddress;
@@ -77,24 +77,6 @@ public class AppUpdateRecord implements Comparable<AppUpdateRecord> {
 
     public void setDuration(int duration) {
         this.duration = duration;
-    }
-
-    /**
-     * Natural order
-     *
-     * @param that
-     * @return -1 if this object should be before that, +1 if this object should be after that, and 0 when they are tied
-     */
-    @Override
-    public int compareTo(AppUpdateRecord that) {
-        // mac address ascending
-        int compare = getMacAddress().compareTo(that.getMacAddress());
-        if (compare != 0) {
-            return compare;
-        }
-
-        // break ties with timestamp ascending
-        return getTimestamp().compareTo(that.getTimestamp());
     }
 
 }

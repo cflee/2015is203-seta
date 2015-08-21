@@ -3,6 +3,8 @@ package net.cflee.seta.controller;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import net.cflee.seta.dao.AppUpdateDAO;
 import net.cflee.seta.entity.AppUpdateRecord;
@@ -31,6 +33,21 @@ public class BasicAppUsageController {
         ArrayList<AppUpdateRecord> records
                 = AppUpdateDAO.retrieveAppUpdates(startDate, DateUtility.addDays(endDate, 1), null, null, null, null,
                         null, conn);
+
+        // sort by mac address ascending, timestamp ascending
+        Collections.sort(records, new Comparator<AppUpdateRecord>() {
+            @Override
+            public int compare(AppUpdateRecord o1, AppUpdateRecord o2) {
+                // mac address ascending
+                int compare = o1.getMacAddress().compareTo(o2.getMacAddress());
+                if (compare != 0) {
+                    return compare;
+                }
+
+                // break ties with timestamp ascending
+                return o1.getTimestamp().compareTo(o2.getTimestamp());
+            }
+        });
 
         // group by user
         ArrayList<ArrayList<AppUpdateRecord>> recordsPerUser = AppUpdateRecordUtility.groupByUser(records);

@@ -40,8 +40,7 @@ public class AppUpdateDAO {
             + "AND `user`.school LIKE ? "
             + "AND `user`.year LIKE ? "
             + "AND app.app_name LIKE ? "
-            + "AND app.app_category LIKE ? "
-            + "ORDER BY app_update.mac_address ASC, app_update.time_stamp ASC ";
+            + "AND app.app_category LIKE ? ";
     private static final String CLEAR_ROW_NUMBERS = "UPDATE app_update SET row_number = 0";
 
     /**
