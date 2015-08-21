@@ -2,6 +2,7 @@ package net.cflee.seta.utility;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import net.cflee.seta.entity.AppUpdateRecord;
 
 public class AppUpdateRecordUtility {
@@ -62,6 +63,36 @@ public class AppUpdateRecordUtility {
             }
 
             results.add(currentDayRecords);
+        }
+
+        return results;
+    }
+
+    /**
+     *
+     * @param records AppUpdateRecords in app category ascending order
+     * @param categories categories in ascending order
+     * @return
+     */
+    public static HashMap<String, ArrayList<AppUpdateRecord>> groupByAppCategory(ArrayList<AppUpdateRecord> records,
+            ArrayList<String> categories) {
+        HashMap<String, ArrayList<AppUpdateRecord>> results = new HashMap<>();
+        int i = 0;
+
+        for (String category : categories) {
+            ArrayList<AppUpdateRecord> currentCategoryRecords = new ArrayList<>();
+            String currentCategory = category;
+
+            for (; i < records.size(); i++) {
+                AppUpdateRecord currentRecord = records.get(i);
+                // category has changed, move on
+                if (!currentCategory.equals(currentRecord.getAppCategory())) {
+                    break;
+                }
+                // same category
+                currentCategoryRecords.add(currentRecord);
+            }
+            results.put(category, currentCategoryRecords);
         }
 
         return results;

@@ -26,6 +26,15 @@
                 <input type="submit" value="Submit">
             </p>
         </form>
+        <h3>Breakdown by usage time category and demographics</h3>
+        <h3>Breakdown by app category</h3>
+        <form action="/report/basic-app-category" method="post">
+            <p>
+                <label>Start date: <input type="text" name="startDate" placeholder="2015-08-01"></label><br>
+                <label>End date: <input type="text" name="endDate" placeholder="2015-08-02"></label><br>
+                <input type="submit" value="Submit">
+            </p>
+        </form>
         <h2>Smartphone Usage Heatmap</h2>
         <form action="/report/smartphone-usage-heatmap" method="post">
             <p>

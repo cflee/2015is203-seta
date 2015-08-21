@@ -19,6 +19,8 @@ public class AppDAO {
             = "INSERT INTO app VALUES(?,?,?)";
     private static final String RETRIEVE_ALL_APP_IDS
             = "SELECT app_id FROM app";
+    private static final String RETRIEVE_ALL_APP_CATEGORIES
+            = "SELECT DISTINCT app_category FROM app ORDER BY app_category ASC";
 
     /**
      * Retrieve all the location ids
@@ -43,6 +45,24 @@ public class AppDAO {
         }
 
         return resultList;
+    }
+
+    public static ArrayList<String> getAllAppCategories(Connection conn) throws SQLException {
+        ArrayList<String> results = new ArrayList<>();
+
+        PreparedStatement psmt = null;
+        ResultSet rs = null;
+        try {
+            psmt = conn.prepareStatement(RETRIEVE_ALL_APP_CATEGORIES);
+            rs = psmt.executeQuery();
+            while (rs.next()) {
+                results.add(rs.getString(1));
+            }
+        } finally {
+            ConnectionManager.close(null, psmt, rs);
+        }
+
+        return results;
     }
 
     /**
