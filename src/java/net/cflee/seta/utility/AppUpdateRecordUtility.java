@@ -45,12 +45,11 @@ public class AppUpdateRecordUtility {
     public static ArrayList<ArrayList<AppUpdateRecord>> groupByDay(Date startDate, Date endDate,
             ArrayList<AppUpdateRecord> records) {
         ArrayList<ArrayList<AppUpdateRecord>> results = new ArrayList<>();
-        ArrayList<AppUpdateRecord> currentDayRecords;
         int i = 0;
 
         for (Date d = new Date(startDate.getTime()); DateUtility.isBeforeOrSameDay(d, endDate); d = DateUtility
                 .addDays(d, 1)) {
-            currentDayRecords = new ArrayList<>();
+            ArrayList<AppUpdateRecord> currentDayRecords = new ArrayList<>();
 
             for (; i < records.size(); i++) {
                 AppUpdateRecord current = records.get(i);
