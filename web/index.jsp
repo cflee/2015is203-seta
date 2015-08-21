@@ -27,6 +27,39 @@
             </p>
         </form>
         <h3>Breakdown by usage time category and demographics</h3>
+        <form action="/report/basic-time-category-demographics" method="post">
+            <p>
+                <label>Start date: <input type="text" name="startDate" placeholder="2015-08-01"></label><br>
+                <label>End date: <input type="text" name="endDate" placeholder="2015-08-02"></label><br>
+                <label>
+                    Param1:
+                    <select name="param1">
+                        <option value="year">Year</option>
+                        <option value="gender">Gender</option>
+                        <option value="school">School</option>
+                    </select>
+                </label>
+                <label>
+                    Param2:
+                    <select name="param2">
+                        <option value="-">-none-</option>
+                        <option value="year">Year</option>
+                        <option value="gender">Gender</option>
+                        <option value="school">School</option>
+                    </select>
+                </label>
+                <label>
+                    Param3:
+                    <select name="param3">
+                        <option value="-">-none-</option>
+                        <option value="year">Year</option>
+                        <option value="gender">Gender</option>
+                        <option value="school">School</option>
+                    </select>
+                </label><br>
+                <input type="submit" value="Submit">
+            </p>
+        </form>
         <h3>Breakdown by app category</h3>
         <form action="/report/basic-app-category" method="post">
             <p>
