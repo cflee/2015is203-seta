@@ -71,7 +71,7 @@
         <h3>Diurnal pattern of app usage time</h3>
         <form action="/report/basic-diurnal" method="post">
             <p>
-                <label>Date: <input type="text" name="startDate" placeholder="2015-08-01"></label><br>
+                <label>Date: <input type="text" name="date" placeholder="2015-08-01"></label><br>
                 <label>
                     Year:
                     <select name="year">
