@@ -68,6 +68,49 @@
                 <input type="submit" value="Submit">
             </p>
         </form>
+        <h3>Diurnal pattern of app usage time</h3>
+        <form action="/report/basic-diurnal" method="post">
+            <p>
+                <label>Date: <input type="text" name="startDate" placeholder="2015-08-01"></label><br>
+                <label>
+                    Year:
+                    <select name="year">
+                        <option value="-">-all-</option>
+                        <%
+                            int[] validYears = {2011, 2012, 2013, 2014, 2015};
+                            for (int year : validYears) {
+                                out.println("<option value=\"" + year + "\">" + year + "</option>");
+                            }
+                        %>
+                    </select>
+                </label>
+                <label>
+                    Gender:
+                    <select name="gender">
+                        <option value="-">-all-</option>
+                        <%
+                            char[] validGenders = {'F', 'M'};
+                            for (char gender : validGenders) {
+                                out.println("<option value=\"" + gender + "\">" + gender + "</option>");
+                            }
+                        %>
+                    </select>
+                </label>
+                <label>
+                    School:
+                    <select name="school">
+                        <option value="-">-all-</option>
+                        <%
+                            String[] validSchools = {"accountancy", "business", "economics", "law", "sis", "socsc"};
+                            for (String school : validSchools) {
+                                out.println("<option value=\"" + school + "\">" + school + "</option>");
+                            }
+                        %>
+                    </select>
+                </label><br>
+                <input type="submit" value="Submit">
+            </p>
+        </form>
         <h2>Smartphone Usage Heatmap</h2>
         <form action="/report/smartphone-usage-heatmap" method="post">
             <p>

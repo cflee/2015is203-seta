@@ -249,4 +249,36 @@ public class BasicAppUsageController {
         return results;
     }
 
+    public static void computeDiurnal(Date date, Integer year, Character gender,
+            String school, Connection conn) throws SQLException {
+
+        // retrieve all the updates with the filtering
+        // compute a new endDate to be exclusive
+        ArrayList<AppUpdateRecord> records
+                = AppUpdateDAO.retrieveAppUpdates(date, DateUtility.addDays(date, 1), year, gender, school, null,
+                        null, conn);
+
+        // sort by mac address ascending, timestamp ascending, then group by user
+        Collections.sort(records, new Comparator<AppUpdateRecord>() {
+            @Override
+            public int compare(AppUpdateRecord o1, AppUpdateRecord o2) {
+                // mac address ascending
+                int compare = o1.getMacAddress().compareTo(o2.getMacAddress());
+                if (compare != 0) {
+                    return compare;
+                }
+
+                // break ties with timestamp ascending
+                return o1.getTimestamp().compareTo(o2.getTimestamp());
+            }
+        });
+        ArrayList<ArrayList<AppUpdateRecord>> recordsPerUser = AppUpdateRecordUtility.groupByUser(records);
+
+        // TODO: pending clarification
+        // for each user, group by hour? (ignores updates across hour boundaries)
+        // or compute the actual app usage durations across whole day first then count usage time per hour
+        //
+        // compute average app usage time per-user for each hour
+    }
+
 }
