@@ -3,6 +3,11 @@
 <%@page import="net.cflee.seta.entity.User"%>
 <% User user = (User) session.getAttribute("user"); %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%
+    int[] validYears = {2011, 2012, 2013, 2014, 2015};
+    char[] validGenders = {'F', 'M'};
+    String[] validSchools = {"accountancy", "business", "economics", "law", "sis", "socsc"};
+%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -77,7 +82,6 @@
                     <select name="year">
                         <option value="-">-all-</option>
                         <%
-                            int[] validYears = {2011, 2012, 2013, 2014, 2015};
                             for (int year : validYears) {
                                 out.println("<option value=\"" + year + "\">" + year + "</option>");
                             }
@@ -89,7 +93,6 @@
                     <select name="gender">
                         <option value="-">-all-</option>
                         <%
-                            char[] validGenders = {'F', 'M'};
                             for (char gender : validGenders) {
                                 out.println("<option value=\"" + gender + "\">" + gender + "</option>");
                             }
@@ -101,7 +104,6 @@
                     <select name="school">
                         <option value="-">-all-</option>
                         <%
-                            String[] validSchools = {"accountancy", "business", "economics", "law", "sis", "socsc"};
                             for (String school : validSchools) {
                                 out.println("<option value=\"" + school + "\">" + school + "</option>");
                             }
