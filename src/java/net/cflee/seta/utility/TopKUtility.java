@@ -8,7 +8,7 @@ import net.cflee.seta.entity.TopKResult;
 
 public class TopKUtility {
 
-    public static void sortAndRank(ArrayList<TopKResult> results, int k) {
+    public static void sortRankFilter(ArrayList<TopKResult> results, int k) {
         // sort by mac address ascending, timestamp ascending
         Collections.sort(results, new Comparator<TopKResult>() {
             @Override

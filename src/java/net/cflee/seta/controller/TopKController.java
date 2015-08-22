@@ -39,7 +39,7 @@ public class TopKController {
                     AppUpdateRecordUtility.sumDurations(appUpdates)));
         }
 
-        TopKUtility.sortAndRank(results, k);
+        TopKUtility.sortRankFilter(results, k);
 
         return results;
     }
