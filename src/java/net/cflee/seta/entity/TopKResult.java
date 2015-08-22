@@ -1,86 +1,60 @@
 package net.cflee.seta.entity;
 
 /**
- * Container to store the rank #, semantic place name, and count of people for Top-k use cases.
- *
- * These include Top-k Popular Places, Top-k Next Places, and their respective grouped variants.
+ * Container to store the rank #, name, and duration of things for Top-k use cases.
  */
 public class TopKResult implements Comparable<TopKResult> {
 
     private int rank;
-    private String semanticPlace;
-    private int count;
+    private String name;
+    private int duration;
 
     /**
      * Constructs a TopKResult to store a single 'row' of data, with default rank.
      *
      * The default rank is 0. This should be used when the rank number is to be determined later.
      *
-     * @param semanticPlace name of semantic place
-     * @param count number of people in this semantic place
+     * @param name name
+     * @param duration amount of time in seconds
      */
-    public TopKResult(String semanticPlace, int count) {
+    public TopKResult(String name, int duration) {
         this.rank = 0;
-        this.semanticPlace = semanticPlace;
-        this.count = count;
+        this.name = name;
+        this.duration = duration;
     }
 
-    /**
-     * Retrieve the rank of the topKResult
-     *
-     * @return rank
-     */
     public int getRank() {
         return rank;
     }
 
-    /**
-     * Retrieve the semanticPlace of the topKResult
-     *
-     * @return semanticPlace
-     */
-    public String getSemanticPlace() {
-        return semanticPlace;
+    public String getName() {
+        return name;
     }
 
-    /**
-     * Retrieve the total number of counts of the topKResult
-     *
-     * @return count
-     */
-    public int getCount() {
-        return count;
+    public int getDuration() {
+        return duration;
     }
 
-    /**
-     * Set the total number of counts of the topKResult
-     *
-     * @param count
-     */
     public void addCount(int count) {
-        this.count += count;
+        this.duration += count;
     }
 
-    /**
-     * Set the rank of the topKResult
-     *
-     * @param rank
-     */
     public void setRank(int rank) {
         this.rank = rank;
     }
 
     /**
-     * Natural order: email ascending, and mac address ascending
+     * Natural order: duration ascending, and name ascending
      *
-     * @param that LocationUpdate to be compared against
+     * @param that
      * @return -1 if this object should be before that, +1 if this object should be after that, and 0 when they are tied
      */
     @Override
-    public int compareTo(TopKResult topKResult) {
-        if (this.count == topKResult.getCount()) {
-            return this.semanticPlace.compareTo(topKResult.getSemanticPlace());
+    public int compareTo(TopKResult that) {
+        int difference = that.getDuration() - this.duration;
+        if (difference != 0) {
+            return difference;
         }
-        return topKResult.getCount() - this.count;
+        return this.name.compareTo(that.getName());
     }
 }
