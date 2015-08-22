@@ -35,8 +35,10 @@ public class TopKController {
         ArrayList<ArrayList<AppUpdateRecord>> groupedByApp = AppUpdateRecordUtility.groupByApp(records);
 
         for (ArrayList<AppUpdateRecord> appUpdates : groupedByApp) {
-            results.add(new TopKResult(appUpdates.get(0).getAppName(),
-                    AppUpdateRecordUtility.sumDurations(appUpdates)));
+            int duration = AppUpdateRecordUtility.sumDurations(appUpdates);
+            if (duration > 0) {
+                results.add(new TopKResult(appUpdates.get(0).getAppName(),
+                        duration));
         }
 
         TopKUtility.sortRankFilter(results, k);
