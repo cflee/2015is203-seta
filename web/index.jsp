@@ -14,7 +14,8 @@
     int[] validKs = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     Connection conn;
-    ArrayList<String> validAppCategories = new ArrayList<>();
+    // don't use the <> diamond operator because default tomcat JSP compiler compiles to Java source level 6
+    ArrayList<String> validAppCategories = new ArrayList<String>();
     try {
         conn = ConnectionManager.getConnection();
         validAppCategories = AppDAO.getAllAppCategories(conn);
