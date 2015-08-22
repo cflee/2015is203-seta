@@ -54,7 +54,7 @@ public class BasicTimeCategoryDemographicsServlet extends HttpServlet {
         Connection conn = null;
         List<String> validParams = Arrays.asList("year", "gender", "school");
 
-        if (user == null || !user.getEmail().equals("admin")) {
+        if (user == null) {
             response.sendRedirect("/");
             return;
         }

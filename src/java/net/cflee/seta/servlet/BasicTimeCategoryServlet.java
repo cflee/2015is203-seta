@@ -48,7 +48,7 @@ public class BasicTimeCategoryServlet extends HttpServlet {
         User user = (User) session.getAttribute("user");
         Connection conn = null;
 
-        if (user == null || !user.getEmail().equals("admin")) {
+        if (user == null) {
             response.sendRedirect("/");
             return;
         }
