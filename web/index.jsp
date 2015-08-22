@@ -172,6 +172,16 @@
                             }
                         %>
                     </select>
+                </label>
+                <label>
+                    K:
+                    <select name="k">
+                        <%
+                            for (int k : validKs) {
+                                out.println("<option value=\"" + k + "\">" + k + "</option>");
+                            }
+                        %>
+                    </select>
                 </label><br>
                 <input type="submit" value="Submit">
             </p>
@@ -189,6 +199,16 @@
                                 out.println("<option value=\"" + appCategory + "\">"
                                         + appCategory
                                         + "</option>");
+                            }
+                        %>
+                    </select>
+                </label>
+                <label>
+                    K:
+                    <select name="k">
+                        <%
+                            for (int k : validKs) {
+                                out.println("<option value=\"" + k + "\">" + k + "</option>");
                             }
                         %>
                     </select>
