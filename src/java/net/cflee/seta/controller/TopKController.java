@@ -39,6 +39,53 @@ public class TopKController {
             if (duration > 0) {
                 results.add(new TopKResult(appUpdates.get(0).getAppName(),
                         duration));
+            }
+        }
+
+        TopKUtility.sortRankFilter(results, k);
+
+        return results;
+    }
+
+    public static ArrayList<TopKResult> computeStudents(Date startDate, Date endDate, String appCategory, int k,
+            Connection conn) throws SQLException {
+        ArrayList<TopKResult> results = new ArrayList<>();
+
+        // retrieve all the updates with the filtering
+        // compute a new endDate to be exclusive
+        ArrayList<AppUpdateRecord> records
+                = AppUpdateDAO.retrieveAppUpdates(startDate, DateUtility.addDays(endDate, 1), null, null, null, null,
+                        null, conn);
+
+        // sort by mac address ascending, timestamp ascending, then group by user
+        Collections.sort(records, new Comparator<AppUpdateRecord>() {
+            @Override
+            public int compare(AppUpdateRecord o1, AppUpdateRecord o2) {
+                // mac address ascending
+                int compare = o1.getMacAddress().compareTo(o2.getMacAddress());
+                if (compare != 0) {
+                    return compare;
+                }
+
+                // break ties with timestamp ascending
+                return o1.getTimestamp().compareTo(o2.getTimestamp());
+            }
+        });
+        ArrayList<ArrayList<AppUpdateRecord>> recordsPerUser = AppUpdateRecordUtility.groupByUser(records);
+
+        // for each user, sum only the relevant app category's durations
+        for (ArrayList<AppUpdateRecord> userRecords : recordsPerUser) {
+            int duration = 0;
+
+            for (AppUpdateRecord record : userRecords) {
+                if (record.getAppCategory().equals(appCategory)) {
+                    duration += record.getDuration();
+                }
+            }
+
+            if (duration > 0) {
+                results.add(new TopKResult(userRecords.get(0).getUserName(), duration));
+            }
         }
 
         TopKUtility.sortRankFilter(results, k);
