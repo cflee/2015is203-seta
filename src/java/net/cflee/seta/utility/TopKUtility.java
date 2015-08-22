@@ -32,14 +32,12 @@ public class TopKUtility {
             if (i == 0) {
                 // special case for first item since no prev to compare against
                 result.setRank(1);
-                System.out.println(result.getDuration());
             } else {
                 TopKResult prevResult = results.get(i - 1);
                 if (result.getDuration() < prevResult.getDuration()) {
                     // next rank
                     rank++;
                 }
-                System.out.println(result.getDuration() + " " + prevResult.getDuration() + " new rank " + rank);
                 result.setRank(rank);
             }
         }
