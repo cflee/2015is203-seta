@@ -57,6 +57,28 @@ public class AppUpdateRecordUtility {
         return results;
     }
 
+    public static ArrayList<ArrayList<AppUpdateRecord>> groupBySchool(ArrayList<AppUpdateRecord> records) {
+        ArrayList<ArrayList<AppUpdateRecord>> results = new ArrayList<>();
+        ArrayList<AppUpdateRecord> currentSchoolRecords = new ArrayList<>();
+        String previousSchool = null;
+
+        for (AppUpdateRecord record : records) {
+            // is this still the same app as previous record
+            if (previousSchool != null && !previousSchool.equals(record.getUserSchool())) {
+                results.add(currentSchoolRecords);
+                currentSchoolRecords = new ArrayList<>();
+            }
+
+            currentSchoolRecords.add(record);
+            previousSchool = record.getUserSchool();
+        }
+
+        // final sub-list
+        results.add(currentSchoolRecords);
+
+        return results;
+    }
+
     /**
      *
      * @param startDate start date, inclusive
