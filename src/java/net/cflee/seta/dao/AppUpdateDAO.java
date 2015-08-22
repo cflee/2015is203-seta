@@ -128,6 +128,8 @@ public class AppUpdateDAO {
      * Retrieve an ArrayList of AppUpdateRecords, which are joined representations of AppUpdates, but with all the
      * accompanying attributes of the User and the App, to facilitate in-app pivoting.
      *
+     * Use the wrapper Integer and Character classes so that we can just use nulls to detect non-filtering-condition.
+     *
      * @param startDate start date/time, inclusive
      * @param endDate end date/time, exclusive
      * @param year optional, set to null to not-filter by year
