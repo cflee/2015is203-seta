@@ -35,6 +35,28 @@ public class AppUpdateRecordUtility {
         return results;
     }
 
+    public static ArrayList<ArrayList<AppUpdateRecord>> groupByApp(ArrayList<AppUpdateRecord> records) {
+        ArrayList<ArrayList<AppUpdateRecord>> results = new ArrayList<>();
+        ArrayList<AppUpdateRecord> currentAppRecords = new ArrayList<>();
+        int previousAppId = -1;
+
+        for (AppUpdateRecord record : records) {
+            // is this still the same app as previous record
+            if (previousAppId != -1 && previousAppId != record.getAppId()) {
+                results.add(currentAppRecords);
+                currentAppRecords = new ArrayList<>();
+            }
+
+            currentAppRecords.add(record);
+            previousAppId = record.getAppId();
+        }
+
+        // final sub-list
+        results.add(currentAppRecords);
+
+        return results;
+    }
+
     /**
      *
      * @param startDate start date, inclusive

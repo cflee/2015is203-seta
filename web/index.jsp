@@ -11,6 +11,7 @@
     int[] validYears = {2011, 2012, 2013, 2014, 2015};
     char[] validGenders = {'F', 'M'};
     String[] validSchools = {"accountancy", "business", "economics", "law", "sis", "socsc"};
+    int[] validKs = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     Connection conn;
     ArrayList<String> validAppCategories = new ArrayList<>();
@@ -138,6 +139,16 @@
                         <%
                             for (String school : validSchools) {
                                 out.println("<option value=\"" + school + "\">" + school + "</option>");
+                            }
+                        %>
+                    </select>
+                </label>
+                <label>
+                    K:
+                    <select name="k">
+                        <%
+                            for (int k : validKs) {
+                                out.println("<option value=\"" + k + "\">" + k + "</option>");
                             }
                         %>
                     </select>
