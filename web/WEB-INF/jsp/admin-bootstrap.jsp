@@ -59,95 +59,83 @@
             </thead>
             <tbody>
                 <% if (demographicsFile != null) {
-                        for (FileValidationError error : demographicsFile.
-                                    getErrors()) {%>
+                        for (FileValidationError error : demographicsFile.getErrors()) {%>
                 <tr>
                     <td><%= error.getFilename()%></td>
                     <td><%= error.getLineNumber()%></td>
                     <td>
-                <% for (String errorMessage : error.
-                                    getMessages()) {%>
-                <%= errorMessage%> |
-                <% } %>
+                        <% for (String errorMessage : error.getMessages()) {%>
+                        <%= errorMessage%> |
+                        <% } %>
                     </td>
                 </tr>
-                <% }
-                        } %>
-                        <% if (appLookupFile != null) {
-                        for (FileValidationError error : appLookupFile.
-                                getErrors()) {%>
-                        <tr>
-                            <td><%= error.getFilename()%></td>
-                            <td><%= error.getLineNumber()%></td>
-                            <td>
-                                <% for (String errorMessage : error.
-                                        getMessages()) {%>
-                                        <%= errorMessage%> |
-                                        <% } %>
+                <%      }
+                    } %>
+                <% if (appLookupFile != null) {
+                        for (FileValidationError error : appLookupFile.getErrors()) {%>
+                <tr>
+                    <td><%= error.getFilename()%></td>
+                    <td><%= error.getLineNumber()%></td>
+                    <td>
+                        <% for (String errorMessage : error.getMessages()) {%>
+                        <%= errorMessage%> |
+                        <% } %>
                     </td>
                 </tr>
-                <% }
-                        } %>
-                        <% if (appFile != null) {
-                        for (FileValidationError error : appFile.
-                                getErrors()) {%>
-                        <tr>
-                            <td><%= error.getFilename()%></td>
-                            <td><%= error.getLineNumber()%></td>
-                            <td>
-                                <% for (String errorMessage : error.
-                                        getMessages()) {%>
-                                        <%= errorMessage%> |
-                                        <% } %>
+                <%      }
+                    } %>
+                <% if (appFile != null) {
+                        for (FileValidationError error : appFile.getErrors()) {%>
+                <tr>
+                    <td><%= error.getFilename()%></td>
+                    <td><%= error.getLineNumber()%></td>
+                    <td>
+                        <% for (String errorMessage : error.getMessages()) {%>
+                        <%= errorMessage%> |
+                        <% } %>
                     </td>
                 </tr>
-                <% }
-                        } %>
-                        <% if (locationLookupFile != null) {
-                                for (FileValidationError error : locationLookupFile.
-                                        getErrors()) {%>
-                        <tr>
-                            <td><%= error.getFilename()%></td>
-                            <td><%= error.getLineNumber()%></td>
-                            <td>
-                                <% for (String errorMessage : error.
-                                        getMessages()) {%>
-                                        <%= errorMessage%> |
-                                        <% } %>
+                <%      }
+                    } %>
+                <% if (locationLookupFile != null) {
+                        for (FileValidationError error : locationLookupFile.getErrors()) {%>
+                <tr>
+                    <td><%= error.getFilename()%></td>
+                    <td><%= error.getLineNumber()%></td>
+                    <td>
+                        <% for (String errorMessage : error.getMessages()) {%>
+                        <%= errorMessage%> |
+                        <% } %>
                     </td>
                 </tr>
-                <% }
-                        } %>
-                        <% if (locationFile != null) {
-                                for (FileValidationError error : locationFile.
-                                        getErrors()) {%>
-                        <tr>
-                            <td><%= error.getFilename()%></td>
-                            <td><%= error.getLineNumber()%></td>
-                            <td>
-                                <% for (String errorMessage : error.
-                                        getMessages()) {%>
-                                        <%= errorMessage%> |
-                                        <% } %>
+                <%      }
+                    } %>
+                <% if (locationFile != null) {
+                        for (FileValidationError error : locationFile.getErrors()) {%>
+                <tr>
+                    <td><%= error.getFilename()%></td>
+                    <td><%= error.getLineNumber()%></td>
+                    <td>
+                        <% for (String errorMessage : error.getMessages()) {%>
+                        <%= errorMessage%> |
+                        <% } %>
                     </td>
                 </tr>
-                <% }
-                        } %>
-                        <% if (locationDeleteFile != null) {
-                        for (FileValidationError error : locationDeleteFile.
-                                getErrors()) {%>
-                        <tr>
-                            <td><%= error.getFilename()%></td>
-                            <td><%= error.getLineNumber()%></td>
-                            <td>
-                                <% for (String errorMessage : error.
-                                    getMessages()) {%>
-                                <%= errorMessage%> |
-                                <% } %>
-                            </td>
-                        </tr>
-                        <% }
-                        } %>
+                <%      }
+                    } %>
+                <% if (locationDeleteFile != null) {
+                        for (FileValidationError error : locationDeleteFile.getErrors()) {%>
+                <tr>
+                    <td><%= error.getFilename()%></td>
+                    <td><%= error.getLineNumber()%></td>
+                    <td>
+                        <% for (String errorMessage : error.getMessages()) {%>
+                        <%= errorMessage%> |
+                        <% } %>
+                    </td>
+                </tr>
+                <%      }
+                    } %>
             </tbody>
         </table>
         <%
