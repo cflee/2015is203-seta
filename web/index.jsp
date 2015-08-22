@@ -1,3 +1,7 @@
+<%@page import="java.sql.SQLException"%>
+<%@page import="net.cflee.seta.utility.ConnectionManager"%>
+<%@page import="java.sql.Connection"%>
+<%@page import="net.cflee.seta.dao.AppDAO"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="net.cflee.seta.entity.HeatmapResult"%>
 <%@page import="net.cflee.seta.entity.User"%>
@@ -7,6 +11,15 @@
     int[] validYears = {2011, 2012, 2013, 2014, 2015};
     char[] validGenders = {'F', 'M'};
     String[] validSchools = {"accountancy", "business", "economics", "law", "sis", "socsc"};
+
+    Connection conn;
+    ArrayList<String> validAppCategories = new ArrayList<>();
+    try {
+        conn = ConnectionManager.getConnection();
+        validAppCategories = AppDAO.getAllAppCategories(conn);
+    } catch (SQLException e) {
+
+    }
 %>
 <!DOCTYPE html>
 <html>
@@ -113,8 +126,67 @@
                 <input type="submit" value="Submit">
             </p>
         </form>
-        <h2>Smartphone Usage Heatmap</h2>
-        <form action="/report/smartphone-usage-heatmap" method="post">
+        <h2>Top-k App Usage Report</h2>
+        <h3>Top-k most used apps</h3>
+        <form action="/report/topk-apps" method="post">
+            <p>
+                <label>Start date: <input type="text" name="startDate" placeholder="2015-08-01"></label><br>
+                <label>End date: <input type="text" name="endDate" placeholder="2015-08-02"></label><br>
+                <label>
+                    School:
+                    <select name="school">
+                        <%
+                            for (String school : validSchools) {
+                                out.println("<option value=\"" + school + "\">" + school + "</option>");
+                            }
+                        %>
+                    </select>
+                </label><br>
+                <input type="submit" value="Submit">
+            </p>
+        </form>
+                        <h3>Top-k students with most app usage</h3>
+                        <form action="/report/topk-students" method="post">
+                            <p>
+                                <label>Start date: <input type="text" name="startDate" placeholder="2015-08-01"></label><br>
+                                <label>End date: <input type="text" name="endDate" placeholder="2015-08-02"></label><br>
+                                <label>
+                                    School:
+                                    <select name="appCategory">
+                                        <%
+                                            for (String appCategory : validAppCategories) {
+                                                out.println("<option value=\"" + appCategory + "\">" + appCategory
+                                                        + "</option>");
+                                            }
+                                        %>
+                                    </select>
+                                </label><br>
+                                <input type="submit" value="Submit">
+                            </p>
+                        </form>
+                        <h3>Top-k schools with most app usage</h3>
+                        <form action="/report/topk-schools" method="post">
+                            <p>
+                                <label>Start date: <input type="text" name="startDate" placeholder="2015-08-01"></label><br>
+                                <label>End date: <input type="text" name="endDate" placeholder="2015-08-02"></label><br>
+                                <label>
+                                    School:
+                                    <select name="appCategory">
+                                        <%
+                                            for (String appCategory : validAppCategories) {
+                                                out.println("<option value=\"" + appCategory + "\">"
+                                                        + appCategory
+                                                        + "</option>");
+                                            }
+                                        %>
+                                    </select>
+                                </label><br>
+                                <input type="submit" value="Submit">
+                            </p>
+                        </form>
+                        <h2>Smartphone Overuse Report</h2>
+                        <h2>Smartphone Usage Heatmap</h2>
+                        <form action="/report/smartphone-usage-heatmap" method="post">
             <p>
                 <label>Date: <input type="text" name="date" placeholder="2015-08-01 12:15:00"></label><br>
                 <label>Floor: <input type="text" name="floor" placeholder="0 to 5"></label><br>
@@ -135,6 +207,8 @@
         <%
             }
         %>
+        <h2>Social Activeness Report</h2>
+        <h2>Advanced Smartphone Overuse Report</h2>
         <% }%>
     </body>
 </html>

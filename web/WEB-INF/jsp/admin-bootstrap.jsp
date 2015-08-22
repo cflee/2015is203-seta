@@ -11,23 +11,22 @@
     <body>
         <h1>Admin Page</h1>
         <a href="/">Back to main page</a>
-        <h2>Bootstrap</h2>
+        <h2>Bootstrap / Bootstrap Location Data</h2>
         <form action="/admin/bootstrap" method="post" enctype="multipart/form-data">
             <p>
                 <input type="file" name="bootstrap-file">
                 <input type="submit" value="Submit">
             </p>
         </form>
-        <h2>Add Data</h2>
+        <h2>Add Data / Add Location Data</h2>
         <form action="/admin/add" method="post" enctype="multipart/form-data">
             <p>
                 <input type="file" name="bootstrap-file">
                 <input type="submit" value="Submit">
             </p>
         </form>
-        <h2>Bootstrap Location Data</h2>
-        <h2>Add Location Data</h2>
         <h2>Delete Location Data</h2>
+        <p>TBD</p>
         <%
             FileValidationResult demographicsFile = (FileValidationResult) request.
                     getAttribute("demographicsFile");
