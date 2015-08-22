@@ -163,7 +163,7 @@
                 <label>Start date: <input type="text" name="startDate" placeholder="2015-08-01"></label><br>
                 <label>End date: <input type="text" name="endDate" placeholder="2015-08-02"></label><br>
                 <label>
-                    School:
+                    App Category:
                     <select name="appCategory">
                         <%
                             for (String appCategory : validAppCategories) {
@@ -182,7 +182,7 @@
                 <label>Start date: <input type="text" name="startDate" placeholder="2015-08-01"></label><br>
                 <label>End date: <input type="text" name="endDate" placeholder="2015-08-02"></label><br>
                 <label>
-                    School:
+                    App Category:
                     <select name="appCategory">
                         <%
                             for (String appCategory : validAppCategories) {
