@@ -38,9 +38,7 @@ public class AppUpdateDAO {
             + "AND app_update.time_stamp < ? "
             + "AND `user`.gender LIKE ? "
             + "AND `user`.school LIKE ? "
-            + "AND `user`.year LIKE ? "
-            + "AND app.app_name LIKE ? "
-            + "AND app.app_category LIKE ? ";
+            + "AND `user`.year LIKE ? ";
     private static final String CLEAR_ROW_NUMBERS = "UPDATE app_update SET row_number = 0";
 
     /**
@@ -130,19 +128,21 @@ public class AppUpdateDAO {
      *
      * Use the wrapper Integer and Character classes so that we can just use nulls to detect non-filtering-condition.
      *
+     * Not allowed to filter by app name or app category because that will yield incorrect durations, as subsequent or
+     * intervening use of other apps by the user in-between the filtered app name or category won't be included in the
+     * SQL results.
+     *
      * @param startDate start date/time, inclusive
      * @param endDate end date/time, exclusive
      * @param year optional, set to null to not-filter by year
      * @param gender optional, set to null to not-filter by year
      * @param school optional, set to null to not-filter by year
-     * @param appName optional, set to null to not-filter by year
-     * @param appCategory optional, set to null to not-filter by year
      * @param conn connection to the database
      * @return ArrayList of AppUpdateRecords
      * @throws SQLException
      */
     public static ArrayList<AppUpdateRecord> retrieveAppUpdates(Date startDate, Date endDate, Integer year,
-            Character gender, String school, String appName, String appCategory, Connection conn) throws SQLException {
+            Character gender, String school, Connection conn) throws SQLException {
         PreparedStatement psmt = null;
         ResultSet rs = null;
         ArrayList<AppUpdateRecord> results = new ArrayList<>();
@@ -168,16 +168,6 @@ public class AppUpdateDAO {
                 psmt.setString(5, "%");
             } else {
                 psmt.setInt(5, year);
-            }
-            if (appName == null) {
-                psmt.setString(6, "%");
-            } else {
-                psmt.setString(6, appName);
-            }
-            if (appCategory == null) {
-                psmt.setString(7, "%");
-            } else {
-                psmt.setString(7, appCategory);
             }
             rs = psmt.executeQuery();
 
