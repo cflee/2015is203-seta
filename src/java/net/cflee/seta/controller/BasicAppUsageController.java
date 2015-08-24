@@ -37,8 +37,7 @@ public class BasicAppUsageController {
         // retrieve all the updates with the filtering
         // compute a new endDate to be exclusive
         ArrayList<AppUpdateRecord> records
-                = AppUpdateDAO.retrieveAppUpdates(startDate, DateUtility.addDays(endDate, 1), null, null, null, null,
-                        null, conn);
+                = AppUpdateDAO.retrieveAppUpdates(startDate, DateUtility.addDays(endDate, 1), null, null, null, conn);
 
         // sort by mac address ascending, timestamp ascending
         Collections.sort(records, new Comparator<AppUpdateRecord>() {
@@ -86,8 +85,7 @@ public class BasicAppUsageController {
         // retrieve all the updates with the filtering
         // compute a new endDate to be exclusive
         ArrayList<AppUpdateRecord> records
-                = AppUpdateDAO.retrieveAppUpdates(startDate, DateUtility.addDays(endDate, 1), null, null, null, null,
-                        null, conn);
+                = AppUpdateDAO.retrieveAppUpdates(startDate, DateUtility.addDays(endDate, 1), null, null, null, conn);
         // sort by app category ascending
         // sort by mac address ascending, timestamp ascending
         Collections.sort(records, new Comparator<AppUpdateRecord>() {
@@ -135,8 +133,7 @@ public class BasicAppUsageController {
         // retrieve all the updates with the filtering
         // compute a new endDate to be exclusive
         ArrayList<AppUpdateRecord> records
-                = AppUpdateDAO.retrieveAppUpdates(startDate, DateUtility.addDays(endDate, 1), null, null, null, null,
-                        null, conn);
+                = AppUpdateDAO.retrieveAppUpdates(startDate, DateUtility.addDays(endDate, 1), null, null, null, conn);
 
         // sort by mac address ascending, timestamp ascending, then group by user
         Collections.sort(records, new Comparator<AppUpdateRecord>() {
@@ -255,8 +252,7 @@ public class BasicAppUsageController {
         // retrieve all the updates with the filtering
         // compute a new endDate to be exclusive
         ArrayList<AppUpdateRecord> records
-                = AppUpdateDAO.retrieveAppUpdates(date, DateUtility.addDays(date, 1), year, gender, school, null,
-                        null, conn);
+                = AppUpdateDAO.retrieveAppUpdates(date, DateUtility.addDays(date, 1), year, gender, school, conn);
 
         // sort by mac address ascending, timestamp ascending, then group by user
         Collections.sort(records, new Comparator<AppUpdateRecord>() {
