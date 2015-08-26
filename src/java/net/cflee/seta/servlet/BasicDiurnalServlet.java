@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -70,14 +71,16 @@ public class BasicDiurnalServlet extends HttpServlet {
                 if (!genderString.equals("-")) {
                     gender = genderString.charAt(0);
                 }
+                if (school.equals("-")) {
+                    school = null;
+                }
 
                 // TODO: capture return result
-                BasicAppUsageController
-                        .computeDiurnal(date, year, gender, school, conn);
+                LinkedHashMap<Integer, Double> results
+                        = BasicAppUsageController.computeDiurnal(date, year, gender, school, conn);
 
-                request.setAttribute("basicTimeCategoryDemographicsResults", null);
-                request.getRequestDispatcher("/WEB-INF/jsp/basic-time-category-demographics.jsp").forward(request,
-                        response);
+                request.setAttribute("basicDiurnalResults", results);
+                request.getRequestDispatcher("/WEB-INF/jsp/basic-diurnal.jsp").forward(request, response);
             } catch (SQLException e) {
                 request.setAttribute("errorMessage", "SQL connection error");
                 request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(request, response);

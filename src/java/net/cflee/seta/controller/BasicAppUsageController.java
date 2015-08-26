@@ -246,8 +246,9 @@ public class BasicAppUsageController {
         return results;
     }
 
-    public static void computeDiurnal(Date date, Integer year, Character gender,
+    public static LinkedHashMap<Integer, Double> computeDiurnal(Date date, Integer year, Character gender,
             String school, Connection conn) throws SQLException {
+        LinkedHashMap<Integer, Double> results = new LinkedHashMap<>();
 
         // retrieve all the updates with the filtering
         // compute a new endDate to be exclusive
@@ -270,11 +271,27 @@ public class BasicAppUsageController {
         });
         ArrayList<ArrayList<AppUpdateRecord>> recordsPerUser = AppUpdateRecordUtility.groupByUser(records);
 
-        // TODO: pending clarification
-        // for each user, group by hour? (ignores updates across hour boundaries)
-        // or compute the actual app usage durations across whole day first then count usage time per hour
-        //
-        // compute average app usage time per-user for each hour
+        // number of users who have at least one app update throughout the entire day
+        int totalNumOfUsers = recordsPerUser.size();
+
+        // sort by timestamp ascending, then group by hour
+        Collections.sort(records, new Comparator<AppUpdateRecord>() {
+            @Override
+            public int compare(AppUpdateRecord o1, AppUpdateRecord o2) {
+                return o1.getTimestamp().compareTo(o2.getTimestamp());
+            }
+        });
+        ArrayList<ArrayList<AppUpdateRecord>> recordsPerHour = AppUpdateRecordUtility.groupByHour(records);
+
+        // compute average app usage time (in minutes) per-user for each hour
+        for (int h = 0; h < 24; h++) {
+            // average app usage time across all users, in minutes
+            double averageHourlyDuration = (double) AppUpdateRecordUtility.sumDurations(recordsPerHour.get(h))
+                    / totalNumOfUsers / 60;
+            results.put(h, averageHourlyDuration);
+        }
+
+        return results;
     }
 
 }

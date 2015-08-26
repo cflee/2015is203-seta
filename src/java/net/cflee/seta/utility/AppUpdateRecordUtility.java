@@ -1,7 +1,9 @@
 package net.cflee.seta.utility;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import net.cflee.seta.entity.AppUpdateRecord;
 
@@ -106,6 +108,34 @@ public class AppUpdateRecordUtility {
             }
 
             results.add(currentDayRecords);
+        }
+
+        return results;
+    }
+
+    public static ArrayList<ArrayList<AppUpdateRecord>> groupByHour(ArrayList<AppUpdateRecord> records) {
+        ArrayList<ArrayList<AppUpdateRecord>> results = new ArrayList<>();
+        int i = 0;
+
+        for (int h = 0; h < 24; h++) {
+            ArrayList<AppUpdateRecord> currentHourRecords = new ArrayList<>();
+
+            for (; i < records.size(); i++) {
+                AppUpdateRecord current = records.get(i);
+                Calendar cal = GregorianCalendar.getInstance();
+                cal.setTime(current.getTimestamp());
+                int currentHour = cal.get(Calendar.HOUR_OF_DAY);
+
+                if (currentHour != h) {
+                    // different hour, break this for loop to move on to next hour
+                    break;
+                }
+                // same hour, add to this hour's list
+
+                currentHourRecords.add(current);
+            }
+
+            results.add(currentHourRecords);
         }
 
         return results;
