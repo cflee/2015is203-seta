@@ -4,8 +4,15 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
     LinkedHashMap<String, BasicAppUsageTimeCategoryResult> results
-                = (LinkedHashMap<String, BasicAppUsageTimeCategoryResult>) request.getAttribute(
-                        "basicTimeCategoryDemographicsResults");
+            = (LinkedHashMap<String, BasicAppUsageTimeCategoryResult>) request.getAttribute(
+                    "basicTimeCategoryDemographicsResults");
+
+                        // compute grand total for percentage calculation base
+                        int total = 0;
+                        for (Map.Entry<String, BasicAppUsageTimeCategoryResult> entry : results.entrySet()) {
+                            BasicAppUsageTimeCategoryResult result = entry.getValue();
+                            total += result.getTotal();
+                        }
 %>
 <!DOCTYPE html>
 <html>
@@ -25,9 +32,9 @@
                     %>
             <tr>
                 <td><%= demographic%></td>
-                <td><%= result.getMild()%> (<%= Math.round((float) result.getMild() / result.getTotal() * 100)%>%)</td>
-                <td><%= result.getNormal()%> (<%= Math.round((float) result.getNormal() / result.getTotal() * 100)%>%)</td>
-                <td><%= result.getIntense()%> (<%= Math.round((float) result.getIntense() / result.getTotal() * 100)%>%)</td>
+                <td><%= result.getMild()%> (<%= Math.round((float) result.getMild() / total * 100)%>%)</td>
+                <td><%= result.getNormal()%> (<%= Math.round((float) result.getNormal() / total * 100)%>%)</td>
+                <td><%= result.getIntense()%> (<%= Math.round((float) result.getIntense() / total * 100)%>%)</td>
             </tr>
             <% }%>
         </table>
