@@ -122,6 +122,11 @@ public class AppUpdateDAO {
         }
     }
 
+    public static ArrayList<AppUpdateRecord> retrieveAppUpdates(Date startDate, Date endDate, Connection conn)
+            throws SQLException {
+        return retrieveAppUpdates(startDate, endDate, null, null, null, null, conn);
+    }
+
     /**
      * Retrieve an ArrayList of AppUpdateRecords, which are joined representations of AppUpdates, but with all the
      * accompanying attributes of the User and the App, to facilitate in-app pivoting.
@@ -143,6 +148,11 @@ public class AppUpdateDAO {
      */
     public static ArrayList<AppUpdateRecord> retrieveAppUpdates(Date startDate, Date endDate, Integer year,
             Character gender, String school, Connection conn) throws SQLException {
+        return retrieveAppUpdates(startDate, endDate, year, gender, school, null, conn);
+    }
+
+    public static ArrayList<AppUpdateRecord> retrieveAppUpdates(Date startDate, Date endDate, Integer year,
+            Character gender, String school, String username, Connection conn) throws SQLException {
         PreparedStatement psmt = null;
         ResultSet rs = null;
         ArrayList<AppUpdateRecord> results = new ArrayList<>();

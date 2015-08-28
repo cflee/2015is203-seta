@@ -53,7 +53,7 @@ public class TopKController {
         // retrieve all the updates with the filtering
         // compute a new endDate to be exclusive
         ArrayList<AppUpdateRecord> records
-                = AppUpdateDAO.retrieveAppUpdates(startDate, DateUtility.addDays(endDate, 1), null, null, null, conn);
+                = AppUpdateDAO.retrieveAppUpdates(startDate, DateUtility.addDays(endDate, 1), conn);
 
         // sort by mac address ascending, timestamp ascending, then group by user
         Collections.sort(records, new Comparator<AppUpdateRecord>() {
@@ -98,7 +98,7 @@ public class TopKController {
         // retrieve all the updates with the filtering
         // compute a new endDate to be exclusive
         ArrayList<AppUpdateRecord> records
-                = AppUpdateDAO.retrieveAppUpdates(startDate, DateUtility.addDays(endDate, 1), null, null, null, conn);
+                = AppUpdateDAO.retrieveAppUpdates(startDate, DateUtility.addDays(endDate, 1), conn);
 
         // sort by school ascending, then group by school
         Collections.sort(records, new Comparator<AppUpdateRecord>() {
