@@ -87,7 +87,6 @@ public class BasicAppUsageController {
         ArrayList<AppUpdateRecord> records
                 = AppUpdateDAO.retrieveAppUpdates(startDate, DateUtility.addDays(endDate, 1), conn);
         // sort by app category ascending
-        // sort by mac address ascending, timestamp ascending
         Collections.sort(records, new Comparator<AppUpdateRecord>() {
             @Override
             public int compare(AppUpdateRecord o1, AppUpdateRecord o2) {
