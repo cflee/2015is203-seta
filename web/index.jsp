@@ -217,6 +217,13 @@
             </p>
         </form>
         <h2>Smartphone Overuse Report</h2>
+        <form action="/report/overuse" method="post">
+            <p>
+                <label>Start date: <input type="text" name="startDate" placeholder="2015-08-01"></label><br>
+                <label>End date: <input type="text" name="endDate" placeholder="2015-08-02"></label><br>
+                <input type="submit" value="Submit">
+            </p>
+        </form>
         <h2>Smartphone Usage Heatmap</h2>
         <form action="/report/smartphone-usage-heatmap" method="post">
             <p>

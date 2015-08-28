@@ -38,7 +38,8 @@ public class AppUpdateDAO {
             + "AND app_update.time_stamp < ? "
             + "AND `user`.gender LIKE ? "
             + "AND `user`.school LIKE ? "
-            + "AND `user`.year LIKE ? ";
+            + "AND `user`.year LIKE ? "
+            + "AND `user`.email LIKE ? ";
     private static final String CLEAR_ROW_NUMBERS = "UPDATE app_update SET row_number = 0";
 
     /**
@@ -178,6 +179,11 @@ public class AppUpdateDAO {
                 psmt.setString(5, "%");
             } else {
                 psmt.setInt(5, year);
+            }
+            if (username == null) {
+                psmt.setString(6, "%");
+            } else {
+                psmt.setString(6, username);
             }
             rs = psmt.executeQuery();
 
