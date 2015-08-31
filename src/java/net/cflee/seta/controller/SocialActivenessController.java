@@ -74,14 +74,8 @@ public class SocialActivenessController {
             // we need to look at records up to and including 4m 59s (299 sec) behind
             startDate = DateUtility.addMinutes(startDate, -5);
             startDate = DateUtility.addSeconds(startDate, 1);
-            System.out.println("query startDate " + startDate);
             ArrayList<LocationUpdateRecord> semanticPlaceVisitorUpdates = LocationUpdateDAO
                     .retrieveSemanticPlaceVisitorUpdates(startDate, endDate, userSession.getSemanticPlace(), email, conn);
-            System.out.println("semanticPlaceVisitorUpdates size " + semanticPlaceVisitorUpdates.size());
-            for (LocationUpdateRecord record : semanticPlaceVisitorUpdates) {
-                System.out.println("ts " + record.getTimestamp() + " mac " + record.getMacAddress() + " sem " + record
-                        .getSemanticPlace() + " dur " + record.getDuration());
-            }
 
             // sort by users and timestamp, group by user
             Collections.sort(semanticPlaceVisitorUpdates, new Comparator<LocationUpdateRecord>() {
@@ -97,7 +91,6 @@ public class SocialActivenessController {
             });
             ArrayList<ArrayList<LocationUpdateRecord>> semanticPlaceVisitorUpdatesByUser
                     = LocationUpdateRecordUtility.groupByUser(semanticPlaceVisitorUpdates);
-            System.out.println("semanticPlaceVisitorUpdatesByUser size " + semanticPlaceVisitorUpdatesByUser.size());
 
             // compress location updates for each user
             for (ArrayList<LocationUpdateRecord> records : semanticPlaceVisitorUpdatesByUser) {
@@ -107,9 +100,6 @@ public class SocialActivenessController {
                 for (int i = 0; i < records.size(); i++) {
                     LocationUpdateRecord record = records.get(i);
                     Date recordEndTime = DateUtility.addSeconds(record.getTimestamp(), record.getDuration());
-
-                    System.out.println("*** adjusting ***");
-                    System.out.println("recordEnd " + recordEndTime + " session-endDate " + endDate);
 
                     if (recordEndTime.compareTo(userSession.getTimestamp()) <= 0) {
                         // ends on or before actual start, delete
@@ -124,36 +114,26 @@ public class SocialActivenessController {
                     }
 
                     if (recordEndTime.compareTo(endDate) > 0) {
-                        System.out.println("too late");
                         // ends after actual end
                         int durationDiff = DateUtility.differenceInSeconds(recordEndTime, endDate);
                         record.setDuration(record.getDuration() - durationDiff);
                     }
                 }
 
-                System.out.println("user mac " + records.get(0).getMacAddress() + " size " + records.size());
 
                 // compress remaining updates
                 LocationUpdateRecordUtility.compressRecords(records);
-                System.out.println("compressed size " + records.size());
-                for (LocationUpdateRecord record : records) {
-                    System.out.println("ts " + record.getTimestamp() + " mac " + record.getMacAddress() + " sem "
-                            + record.getSemanticPlace() + " dur " + record.getDuration());
-                }
             }
 
             // check for >= 5 min continuously
             for (ArrayList<LocationUpdateRecord> records : semanticPlaceVisitorUpdatesByUser) {
                 for (LocationUpdateRecord record : records) {
                     if (record.getDuration() >= 300) {
-                        System.out.println("record " + record.getTimestamp() + " dur " + record.getDuration());
-                        System.out.println("userSession " + userSession.getTimestamp());
                         // if yes, increase groupSeconds for that period
                         int startSecond = DateUtility.differenceInSeconds(record.getTimestamp(),
                                 userSession.getTimestamp());
                         for (int s = startSecond; s >= 0 && s < startSecond + record.getDuration()
                                 && s < groupSeconds.length; s++) {
-                            System.out.println("s = " + s);
                             groupSeconds[s]++;
                         }
                     }
