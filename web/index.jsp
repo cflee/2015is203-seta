@@ -227,7 +227,7 @@
         <h2>Smartphone Usage Heatmap</h2>
         <form action="/report/smartphone-usage-heatmap" method="post">
             <p>
-                <label>Date: <input type="text" name="date" placeholder="2015-08-01 12:15:00"></label><br>
+                <label>Date/Time: <input type="text" name="date" placeholder="2015-08-01 12:15:00"></label><br>
                 <label>Floor: <input type="text" name="floor" placeholder="0 to 5"></label><br>
                 <input type="submit" value="Submit">
             </p>
