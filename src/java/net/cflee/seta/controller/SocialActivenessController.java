@@ -67,7 +67,7 @@ public class SocialActivenessController {
             Date startDate = userSession.getTimestamp();
             Date endDate = DateUtility.addSeconds(userSession.getTimestamp(), userSession.getDuration());
 
-            // keep track of which seconds in this session are spent with other users
+            // keep track of which seconds in this session are spent with how many other users
             int[] groupSeconds = new int[userSession.getDuration()];
 
             // get updates of users with who were present in the semantic place at least 1 sec during this session
@@ -97,6 +97,8 @@ public class SocialActivenessController {
                 // adjust updates to factor in the actual start datetime of userSession.getTimestamp()
                 // discard if each update's expiry is actually before actual start
                 // increase each update's start timestamp to actual start if it crosses
+                //
+                // limit end (as represented by duration) to the actual end
                 for (int i = 0; i < records.size(); i++) {
                     LocationUpdateRecord record = records.get(i);
                     Date recordEndTime = DateUtility.addSeconds(record.getTimestamp(), record.getDuration());
