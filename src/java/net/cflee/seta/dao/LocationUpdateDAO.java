@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import net.cflee.seta.entity.HeatmapResult;
 import net.cflee.seta.entity.LocationUpdate;
+import net.cflee.seta.entity.LocationUpdateRecord;
 import net.cflee.seta.utility.ConnectionManager;
 import net.cflee.seta.utility.DateUtility;
 
@@ -54,6 +55,33 @@ public class LocationUpdateDAO {
             + "RIGHT OUTER JOIN location ON location_update.location_id = location.location_id "
             + "WHERE location.semantic_place LIKE ? "
             + "GROUP BY location.semantic_place ";
+    private static final String SELECT_JOIN_AND_FILTER
+            = "SELECT location_update.time_stamp, location_update.mac_address, location.semantic_place, `user`.email "
+            + "FROM location_update "
+            + "INNER JOIN location ON location_update.location_id = location.location_id "
+            + "LEFT OUTER JOIN `user` ON location_update.mac_address = `user`.mac_address "
+            + "WHERE location_update.time_stamp >= ? "
+            + "AND location_update.time_stamp < ? "
+            + "AND `user`.email LIKE ? "
+            + "ORDER BY location_update.mac_address ASC, location_update.time_stamp ASC ";
+    private static final String SELECT_AND_JOIN_SEMANTIC_PLACE_VISITOR
+            = "SELECT location_update.time_stamp, location_update.mac_address, location.semantic_place, `user`.email "
+            + "FROM location_update "
+            + "INNER JOIN location ON location_update.location_id = location.location_id "
+            + "LEFT OUTER JOIN `user` ON location_update.mac_address = `user`.mac_address "
+            + "WHERE location_update.time_stamp >= ? "
+            + "AND location_update.time_stamp < ? "
+            + "AND location_update.mac_address IN ( "
+            + "SELECT DISTINCT location_update.mac_address "
+            + "FROM location_update "
+            + "INNER JOIN location ON location_update.location_id = location.location_id "
+            + "WHERE location_update.time_stamp >= ? "
+            + "AND location_update.time_stamp < ? "
+            + "AND location.semantic_place LIKE ? "
+            + ")"
+            + "AND `user`.email NOT LIKE ? "
+            + "ORDER BY location_update.mac_address ASC, location_update.time_stamp ASC ";
+
     /**
      * Check if a matching LocationUpdate record exists. LocationUpdate records are a match if the mac address and
      * timestamp match an existing record in the database.
@@ -207,6 +235,154 @@ public class LocationUpdateDAO {
             ConnectionManager.close(null, psmt, rs);
         }
         return heatmapResultList;
+    }
+
+    /**
+     *
+     * @param startDate inclusive
+     * @param endDate exclusive
+     * @param email filter by email
+     * @param conn connection to database
+     * @return
+     * @throws SQLException
+     */
+    public static ArrayList<LocationUpdateRecord> retrieveUserUpdates(Date startDate, Date endDate,
+            String email, Connection conn) throws SQLException {
+        PreparedStatement psmt = null;
+        ResultSet rs = null;
+        ArrayList<LocationUpdateRecord> results = new ArrayList<>();
+
+        try {
+            psmt = conn.prepareStatement(SELECT_JOIN_AND_FILTER);
+            // mandatory parameters
+            psmt.setTimestamp(1, new Timestamp(startDate.getTime()));
+            psmt.setTimestamp(2, new Timestamp(endDate.getTime()));
+            // optional filters. use % wildcard where necessary
+            // TODO: defend against wildcards in the optional String parameters
+            if (email == null) {
+                psmt.setString(3, "%");
+            } else {
+                psmt.setString(3, email);
+            }
+            rs = psmt.executeQuery();
+
+            // pack into LocationUpdateRecord and insert into ArrayList
+            while (rs.next()) {
+                LocationUpdateRecord record = new LocationUpdateRecord(new Date(rs.getTimestamp(1).getTime()), rs
+                        .getString(2), rs.getString(3), rs.getString(4));
+                results.add(record);
+            }
+
+            // compute the durations for each record, which are 300 seconds by default in their constructor
+            // use old-fashioned for loop as we need to access the n+1 record
+            for (int i = 0; i < results.size(); i++) {
+                LocationUpdateRecord current = results.get(i);
+
+                // obtain the next record if it doesn't overrun
+                // if there's no next record, then there's nothing to do
+                if (i + 1 < results.size()) {
+                    LocationUpdateRecord next = results.get(i + 1);
+
+                    // check if the next record still belongs to this user
+                    // nothing to do if it isn't
+                    if (current.getMacAddress().equals(next.getMacAddress())) {
+                        // same user, now compute the difference in seconds
+                        // to see if this next LocationUpdate overlaps with the 300 sec timeout
+                        // divide by 1000 as the timestamp is in milliseconds
+                        int difference = (int) ((next.getTimestamp().getTime() - current.getTimestamp().getTime())
+                                / 1000);
+                        if (difference <= 300) {
+                            // update this record's duration
+                            current.setDuration(difference);
+                        }
+                    }
+                }
+            }
+        } finally {
+            ConnectionManager.close(null, psmt, rs);
+        }
+
+        return results;
+    }
+
+    /**
+     *
+     * @param startDate inclusive
+     * @param endDate exclusive
+     * @param semanticPlace semantic place of interest
+     * @param email user's email to EXCLUDE entirely from results
+     * @param conn
+     * @return
+     * @throws SQLException
+     */
+    public static ArrayList<LocationUpdateRecord> retrieveSemanticPlaceVisitorUpdates(Date startDate,
+            Date endDate, String semanticPlace, String email, Connection conn) throws SQLException {
+        PreparedStatement psmt = null;
+        ResultSet rs = null;
+        ArrayList<LocationUpdateRecord> results = new ArrayList<>();
+
+        try {
+            psmt = conn.prepareStatement(SELECT_AND_JOIN_SEMANTIC_PLACE_VISITOR);
+            // mandatory parameters
+            psmt.setTimestamp(1, new Timestamp(startDate.getTime()));
+            psmt.setTimestamp(2, new Timestamp(endDate.getTime()));
+            psmt.setTimestamp(3, new Timestamp(startDate.getTime()));
+            psmt.setTimestamp(4, new Timestamp(endDate.getTime()));
+            psmt.setString(6, email);
+            // optional filters. use % wildcard where necessary
+            // TODO: defend against wildcards in the optional String parameters
+            if (semanticPlace == null) {
+                psmt.setString(5, "%");
+            } else {
+                psmt.setString(5, semanticPlace);
+            }
+            rs = psmt.executeQuery();
+
+            // pack into LocationUpdateRecord and insert into ArrayList
+            while (rs.next()) {
+                LocationUpdateRecord record = new LocationUpdateRecord(new Date(rs.getTimestamp(1).getTime()), rs
+                        .getString(2), rs.getString(3), rs.getString(4));
+                results.add(record);
+            }
+
+            // compute the durations for each record, which are 300 seconds by default in their constructor
+            // use old-fashioned for loop as we need to access the n+1 record
+            for (int i = 0; i < results.size(); i++) {
+                LocationUpdateRecord current = results.get(i);
+
+                // obtain the next record if it doesn't overrun
+                // if there's no next record, then there's nothing to do
+                if (i + 1 < results.size()) {
+                    LocationUpdateRecord next = results.get(i + 1);
+
+                    // check if the next record still belongs to this user
+                    // nothing to do if it isn't
+                    if (current.getMacAddress().equals(next.getMacAddress())) {
+                        // same user, now compute the difference in seconds
+                        // to see if this next LocationUpdate overlaps with the 300 sec timeout
+                        // divide by 1000 as the timestamp is in milliseconds
+                        int difference = (int) ((next.getTimestamp().getTime() - current.getTimestamp().getTime())
+                                / 1000);
+                        if (difference <= 300) {
+                            // update this record's duration
+                            current.setDuration(difference);
+                        }
+                    }
+                }
+            }
+
+            // remove all the irrelevant updates (other semantic place since durations have been computed)
+            for (int i = 0; i < results.size(); i++) {
+                if (!results.get(i).getSemanticPlace().equals(semanticPlace)) {
+                    results.remove(i);
+                    i--;
+                }
+            }
+        } finally {
+            ConnectionManager.close(null, psmt, rs);
+        }
+
+        return results;
     }
 
     /**

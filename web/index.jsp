@@ -247,6 +247,12 @@
             }
         %>
         <h2>Social Activeness Report</h2>
+        <form action="/report/social-activeness" method="post">
+            <p>
+                <label>Date: <input type="text" name="date" placeholder="2015-08-01"></label><br>
+                <input type="submit" value="Submit">
+            </p>
+        </form>
         <h2>Advanced Smartphone Overuse Report</h2>
         <% }%>
     </body>

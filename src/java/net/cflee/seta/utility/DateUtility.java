@@ -46,6 +46,10 @@ public class DateUtility {
         return cal.getTime();
     }
 
+    public static int differenceInSeconds(Date d1, Date d2) {
+        return (int) (d1.getTime() / 1000 - d2.getTime() / 1000);
+    }
+
     public static boolean isSameDay(Date date1, Date date2) {
         // get only the day component
         // this computes days assuming Dates are in UTC (so ignoring time zones)
