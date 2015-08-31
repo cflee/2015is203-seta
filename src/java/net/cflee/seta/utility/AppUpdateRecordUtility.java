@@ -32,7 +32,9 @@ public class AppUpdateRecordUtility {
         }
 
         // final sub-list
-        results.add(currentUserRecords);
+        if (previousUser != null) {
+            results.add(currentUserRecords);
+        }
 
         return results;
     }
@@ -54,7 +56,9 @@ public class AppUpdateRecordUtility {
         }
 
         // final sub-list
-        results.add(currentAppRecords);
+        if (previousAppId != -1) {
+            results.add(currentAppRecords);
+        }
 
         return results;
     }
@@ -76,7 +80,9 @@ public class AppUpdateRecordUtility {
         }
 
         // final sub-list
-        results.add(currentSchoolRecords);
+        if (previousSchool != null) {
+            results.add(currentSchoolRecords);
+        }
 
         return results;
     }
