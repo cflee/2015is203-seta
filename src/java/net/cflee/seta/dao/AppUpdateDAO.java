@@ -39,7 +39,8 @@ public class AppUpdateDAO {
             + "AND `user`.gender LIKE ? "
             + "AND `user`.school LIKE ? "
             + "AND `user`.year LIKE ? "
-            + "AND `user`.email LIKE ? ";
+            + "AND `user`.email LIKE ? "
+            + "ORDER BY app_update.mac_address ASC, app_update.time_stamp ASC ";
     private static final String CLEAR_ROW_NUMBERS = "UPDATE app_update SET row_number = 0";
 
     /**
