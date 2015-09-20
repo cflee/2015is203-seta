@@ -47,7 +47,7 @@ public class BootstrapController {
      */
     public static FileValidationResult processDemographicsFile(InputStream inputStream, String filename, Connection conn)
             throws IOException, SQLException {
-        CsvReader demographics = new CsvReader(new InputStreamReader(inputStream), ',');
+        CsvReader demographics = new CsvReader(new InputStreamReader(inputStream, "UTF-8"), ',');
         ArrayList<FileValidationError> errorList = new ArrayList<FileValidationError>();
         ArrayList<User> userList = new ArrayList<User>();
 
@@ -245,7 +245,7 @@ public class BootstrapController {
      */
     public static FileValidationResult processAppLookupFile(InputStream inputStream, String filename, Connection conn)
             throws IOException, SQLException {
-        CsvReader appLookup = new CsvReader(new InputStreamReader(inputStream),
+        CsvReader appLookup = new CsvReader(new InputStreamReader(inputStream, "UTF-8"),
                 ',');
         ArrayList<FileValidationError> errorList = new ArrayList<FileValidationError>();
         ArrayList<App> appList = new ArrayList<App>();
@@ -350,7 +350,7 @@ public class BootstrapController {
      */
     public static FileValidationResult processAppFile(InputStream inputStream, String filename, Connection conn) throws
             IOException, SQLException {
-        CsvReader app = new CsvReader(new InputStreamReader(inputStream),
+        CsvReader app = new CsvReader(new InputStreamReader(inputStream, "UTF-8"),
                 ',');
         ArrayList<FileValidationError> errorList = new ArrayList<FileValidationError>();
 
@@ -518,7 +518,7 @@ public class BootstrapController {
      */
     public static FileValidationResult processLocationLookUpFile(InputStream inputStream, String filename,
             Connection conn) throws IOException, SQLException {
-        CsvReader locationLookUp = new CsvReader(new InputStreamReader(inputStream), ',');
+        CsvReader locationLookUp = new CsvReader(new InputStreamReader(inputStream, "UTF-8"), ',');
         ArrayList<FileValidationError> errorList = new ArrayList<FileValidationError>();
         ArrayList<Location> locationList = new ArrayList<Location>();
 
@@ -620,7 +620,7 @@ public class BootstrapController {
      */
     public static FileValidationResult processLocationFile(InputStream inputStream, String filename, Connection conn)
             throws IOException, SQLException {
-        CsvReader location = new CsvReader(new InputStreamReader(inputStream),
+        CsvReader location = new CsvReader(new InputStreamReader(inputStream, "UTF-8"),
                 ',');
         ArrayList<FileValidationError> errorList = new ArrayList<FileValidationError>();
 
@@ -782,7 +782,7 @@ public class BootstrapController {
     public static DeleteFileValidationResult processLocationDeleteFile(InputStream inputStream, String filename,
             Connection conn)
             throws IOException, SQLException {
-        CsvReader location = new CsvReader(new InputStreamReader(inputStream), ',');
+        CsvReader location = new CsvReader(new InputStreamReader(inputStream, "UTF-8"), ',');
         ArrayList<FileValidationError> errorList = new ArrayList<FileValidationError>();
 
         // Trim white space
