@@ -5,13 +5,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import net.cflee.seta.dao.AppDAO;
 import net.cflee.seta.dao.AppUpdateDAO;
@@ -350,6 +353,7 @@ public class BootstrapController {
      */
     public static FileValidationResult processAppFile(InputStream inputStream, String filename, Connection conn) throws
             IOException, SQLException {
+        long start = System.currentTimeMillis();
         CsvReader app = new CsvReader(new InputStreamReader(inputStream, "UTF-8"),
                 ',');
         ArrayList<FileValidationError> errorList = new ArrayList<FileValidationError>();
@@ -376,6 +380,14 @@ public class BootstrapController {
 
         // retrieve the list of all the (valid) mac addresses for validation
         ArrayList<String> allMacAddresses = UserDAO.getAllMacAddresses(conn);
+
+        final int BATCH_SIZE = 2000;
+        PreparedStatement insert = conn.prepareStatement("INSERT INTO app_update "
+                + "(mac_address, app_id, time_stamp, row_number) "
+                + "VALUES (?, ?, ?, ?)");
+
+        // timestamp+macaddress to AppUpdate
+        HashMap<String, AppUpdate> appUpdates = new HashMap<>();
 
         // iterate through all records in the file
         while (app.readRecord()) {
@@ -440,51 +452,52 @@ public class BootstrapController {
                 if (errorMessageList.isEmpty()) {
                     AppUpdate appUpdate = new AppUpdate(macAddress, timestamp, appId, rowNumber);
 
-                    int existingRowNo = AppUpdateDAO.checkForExistingRecord(appUpdate, conn);
+                    int existingRowNo = -1;
+                    if (appUpdates.containsKey(timestampString + macAddress)) {
+                        AppUpdate update = appUpdates.get(timestampString + macAddress);
+                        existingRowNo = update.getRowNo();
+                    }
+
                     if (existingRowNo != -1) {
                         // there is a duplicate!
-                        if (existingRowNo == 0) {
-                            // duplicate is not from this round of bootstrap
-                            // we can let the error be emitted for this row
-                            // number
-                            errorMessageList.add("duplicate row");
-                        } else {
-                            // it is a positive integer!
-                            // it is from earlier in this file, need to emit
-                            // the error at the earlier row number!
-                            //
-                            // if there is a FileValidationError with that
-                            // row number, add to its message list, otherwise
-                            // create a new FVE and add it to errorList
-                            boolean hasExistingError = false;
-                            for (FileValidationError existingError : errorList) {
-                                if (existingError.getLineNumber() == existingRowNo) {
-                                    hasExistingError = true;
-                                    existingError.getMessages().add("duplicate row");
-                                }
-                            }
-                            if (!hasExistingError) {
-                                ArrayList<String> tempMessageList = new ArrayList<String>();
-                                tempMessageList.add("duplicate row");
-                                errorList.add(new FileValidationError(filename, existingRowNo, tempMessageList));
-                            }
-                            // then update the database with this new location
-                            // update's location ID
-                            AppUpdateDAO.updateAppId(appUpdate, conn);
-                        }
+                        // TODO: currently ignoring fact that it may come from earlier round of bootstrap (add data)
+                        // it is from earlier in this file, need to emit the error at the earlier row number!
+                        ArrayList<String> tempMessageList = new ArrayList<String>();
+                        tempMessageList.add("duplicate row");
+                        errorList.add(new FileValidationError(filename, existingRowNo, tempMessageList));
                     } else {
                         // no existing LocationUpdate that matches
-                        // go ahead and insert
-                        AppUpdateDAO.insert(appUpdate, conn);
                         numOfValidRecords++;
                     }
+                    // either replace the previous one with the current one
+                    // or just insert this current one
+                    appUpdates.put(timestampString + macAddress, appUpdate);
                 }
             }
             if (!errorMessageList.isEmpty()) {
                 errorList.add(new FileValidationError(filename, rowNumber, errorMessageList));
             }
+
             rowNumber++;
         }
+
+        int recordCount = 0;
+        for (AppUpdate appUpdate : appUpdates.values()) {
+            insert.setString(1, appUpdate.getMacAddress());
+            Date utilDate = appUpdate.getTimestamp();
+            Timestamp timeStamp = new Timestamp(utilDate.getTime());
+            insert.setInt(2, appUpdate.getAppId());
+            insert.setTimestamp(3, timeStamp);
+            insert.setInt(4, appUpdate.getRowNo());
+
+            insert.addBatch();
+            recordCount++;
+
+            if (recordCount % BATCH_SIZE == 0) {
+                insert.executeBatch();
+            }
+        }
+        insert.executeBatch();
 
         // reset all the row numbers in the database
         AppUpdateDAO.clearRowNumberRecords(conn);
@@ -501,6 +514,8 @@ public class BootstrapController {
         // tacking on the errors for rows that previously did not have any
         // errors, but were found to be duplicate rows later
         Collections.sort(errorList);
+
+        System.out.println("processAppFile took " + (System.currentTimeMillis() - start) + " ms");
 
         return new FileValidationResult(numOfValidRecords, errorList);
     }
