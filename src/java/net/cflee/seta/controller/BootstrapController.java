@@ -381,7 +381,7 @@ public class BootstrapController {
         // retrieve the list of all the (valid) mac addresses for validation
         ArrayList<String> allMacAddresses = UserDAO.getAllMacAddresses(conn);
 
-        final int BATCH_SIZE = 2000;
+        final int BATCH_SIZE = 20000;
         PreparedStatement insert = conn.prepareStatement("INSERT INTO app_update "
                 + "(mac_address, app_id, time_stamp, row_number) "
                 + "VALUES (?, ?, ?, ?)");
@@ -480,9 +480,12 @@ public class BootstrapController {
 
             rowNumber++;
         }
+        System.out.println("finished reading app " + (System.currentTimeMillis() - start) + " ms");
 
         int recordCount = 0;
-        for (AppUpdate appUpdate : appUpdates.values()) {
+        ArrayList<AppUpdate> newList = new ArrayList<>(appUpdates.values());
+        Collections.sort(newList);
+        for (AppUpdate appUpdate : newList) {
             insert.setString(1, appUpdate.getMacAddress());
             Date utilDate = appUpdate.getTimestamp();
             Timestamp timeStamp = new Timestamp(utilDate.getTime());
@@ -495,12 +498,14 @@ public class BootstrapController {
 
             if (recordCount % BATCH_SIZE == 0) {
                 insert.executeBatch();
+                conn.commit();
             }
         }
         insert.executeBatch();
+        System.out.println("finished inserting app " + (System.currentTimeMillis() - start) + " ms");
 
         // reset all the row numbers in the database
-        AppUpdateDAO.clearRowNumberRecords(conn);
+//        AppUpdateDAO.clearRowNumberRecords(conn);
 
         // done, commit and set SQL connection autocommit = true
         conn.commit();
@@ -635,6 +640,7 @@ public class BootstrapController {
      */
     public static FileValidationResult processLocationFile(InputStream inputStream, String filename, Connection conn)
             throws IOException, SQLException {
+        long start = System.currentTimeMillis();
         CsvReader location = new CsvReader(new InputStreamReader(inputStream, "UTF-8"),
                 ',');
         ArrayList<FileValidationError> errorList = new ArrayList<FileValidationError>();
@@ -658,6 +664,14 @@ public class BootstrapController {
 
         // retrieve the list of all the (valid) location IDs for validation
         ArrayList<Integer> allLocationIds = LocationDAO.getAllLocationIds(conn);
+
+        final int BATCH_SIZE = 20000;
+        PreparedStatement insert = conn.prepareStatement("INSERT INTO location_update "
+                + "(mac_address, location_id, time_stamp, row_number) "
+                + "VALUES (?, ?, ?, ?)");
+
+        // timestamp+mac_address to LocationUpdate
+        HashMap<String, LocationUpdate> locationUpdates = new HashMap<>();
 
         // iterate through all records in the file
         while (location.readRecord()) {
@@ -718,44 +732,25 @@ public class BootstrapController {
 
                     LocationUpdate locationUpdate = new LocationUpdate(macAddress, timestamp, locationId, rowNumber);
 
-                    int existingRowNo = LocationUpdateDAO.checkForExistingRecord(locationUpdate, conn);
+//                    int existingRowNo = LocationUpdateDAO.checkForExistingRecord(locationUpdate, conn);
+                    int existingRowNo = -1;
+                    if (locationUpdates.containsKey(timestampString + macAddress)) {
+                        LocationUpdate update = locationUpdates.get(timestampString + macAddress);
+                        existingRowNo = update.getRowNo();
+                    }
+
                     if (existingRowNo != -1) {
-                        // there is a duplicate!
-                        if (existingRowNo == 0) {
-                            // duplicate is not from this round of bootstrap
-                            // we can let the error be emitted for this row
-                            // number
-                            errorMessageList.add("duplicate row");
-                        } else {
-                            // it is a positive integer!
-                            // it is from earlier in this file, need to emit
-                            // the error at the earlier row number!
-                            //
-                            // if there is a FileValidationError with that
-                            // row number, add to its message list, otherwise
-                            // create a new FVE and add it to errorList
-                            boolean hasExistingError = false;
-                            for (FileValidationError existingError : errorList) {
-                                if (existingError.getLineNumber() == existingRowNo) {
-                                    hasExistingError = true;
-                                    existingError.getMessages().add("duplicate row");
-                                }
-                            }
-                            if (!hasExistingError) {
-                                ArrayList<String> tempMessageList = new ArrayList<String>();
-                                tempMessageList.add("duplicate row");
-                                errorList.add(new FileValidationError(filename, existingRowNo, tempMessageList));
-                            }
-                            // then update the database with this new location
-                            // update's location ID
-                            LocationUpdateDAO.updateLocationId(locationUpdate, conn);
-                        }
+                        ArrayList<String> tempMessageList = new ArrayList<>();
+                        tempMessageList.add("duplicate row");
+                        errorList.add(new FileValidationError(filename, existingRowNo, tempMessageList));
                     } else {
                         // no existing LocationUpdate that matches
                         // go ahead and insert
-                        LocationUpdateDAO.insert(locationUpdate, conn);
+//                        LocationUpdateDAO.insert(locationUpdate, conn);
                         numOfValidRecords++;
                     }
+
+                    locationUpdates.put(timestampString + macAddress, locationUpdate);
                 }
             }
             if (!errorMessageList.isEmpty()) {
@@ -764,21 +759,49 @@ public class BootstrapController {
             rowNumber++;
         }
 
+        // finished reading all records
+        location.close();
+        location = null;
+        System.out.println("finished reading location " + (System.currentTimeMillis() - start) + " ms");
+
+        ArrayList<LocationUpdate> newList = new ArrayList<>(locationUpdates.values());
+        locationUpdates = null;
+        System.gc();
+        Collections.sort(newList);
+        int recordCount = 0;
+        for (LocationUpdate locationUpdate : newList) {
+            insert.setString(1, locationUpdate.getMacAddress());
+            Date utilDate = locationUpdate.getTimestamp();
+            Timestamp timeStamp = new Timestamp(utilDate.getTime());
+            insert.setInt(2, locationUpdate.getLocationId());
+            insert.setTimestamp(3, timeStamp);
+            insert.setInt(4, locationUpdate.getRowNo());
+
+            insert.addBatch();
+            recordCount++;
+
+            if (recordCount % BATCH_SIZE == 0) {
+                insert.executeBatch();
+                conn.commit();
+            }
+        }
+        insert.executeBatch();
+        System.out.println("finished inserting " + (System.currentTimeMillis() - start) + " ms");
+
         // reset all the row numbers in the database
-        LocationUpdateDAO.clearRowNumberRecords(conn);
+//        LocationUpdateDAO.clearRowNumberRecords(conn);
 
         // done, commit and set SQL connection autocommit = true
         conn.commit();
-        conn.setAutoCommit(true);
-
-        // finished reading all records
-        location.close();
+        conn.setAutoCommit(true);        
 
         // sort the errorList to ensure that the FileValidationErrors are
         // in ascending order of line number. they may be out of order due to
         // tacking on the errors for rows that previously did not have any
         // errors, but were found to be duplicate rows later
         Collections.sort(errorList);
+
+        System.out.println("processLocationFile took " + (System.currentTimeMillis() - start) + " ms");
 
         return new FileValidationResult(numOfValidRecords, errorList);
     }

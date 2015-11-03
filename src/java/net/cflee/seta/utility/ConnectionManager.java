@@ -31,7 +31,9 @@ public class ConnectionManager {
             dbUser = System.getenv("OPENSHIFT_MYSQL_DB_USERNAME");
             dbPassword = System.getenv("OPENSHIFT_MYSQL_DB_PASSWORD");
 
-            dbURL = "jdbc:mysql://" + host + ":" + port + "/" + dbName + "?useUnicode=true&characterEncoding=UTF-8";
+            dbURL = "jdbc:mysql://" + host + ":" + port + "/" + dbName
+                    + "?useUnicode=true&characterEncoding=UTF-8"
+                    + "&rewriteBatchedStatements=true&useServerPrepStmts=false&useCompression=true";
 
         } else {
             // this is development environment
@@ -51,7 +53,9 @@ public class ConnectionManager {
                 dbUser = props.getProperty("db.user").trim();
                 dbPassword = props.getProperty("db.password").trim();
 
-                dbURL = "jdbc:mysql://" + host + ":" + port + "/" + dbName + "?useUnicode=true&characterEncoding=UTF-8";
+                dbURL = "jdbc:mysql://" + host + ":" + port + "/" + dbName
+                        + "?useUnicode=true&characterEncoding=UTF-8"
+                        + "&rewriteBatchedStatements=true&useServerPrepStmts=false&useCompression=true";
             } catch (Exception ex) {
                 // unable to load properties file
                 String message = "Unable to load '" + PROPS_FILENAME + "'.";
@@ -85,7 +89,7 @@ public class ConnectionManager {
         Connection conn = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            //System.out.println("CONN:" + dbURL);
+            System.out.println("CONN:" + dbURL);
             conn = DriverManager.getConnection(dbURL, dbUser, dbPassword);
 
         } catch (ClassNotFoundException ex) {

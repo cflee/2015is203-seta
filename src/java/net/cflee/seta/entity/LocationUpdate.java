@@ -104,6 +104,11 @@ public class LocationUpdate implements Comparable<LocationUpdate> {
      */
     @Override
     public int compareTo(LocationUpdate that) {
-        return macAddress.compareTo(that.macAddress);
+        int result = macAddress.compareTo(that.macAddress);
+        if (result == 0) {
+            return timestamp.compareTo(that.timestamp);
+        } else {
+            return result;
+        }
     }
 }

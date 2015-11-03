@@ -144,16 +144,20 @@ public class BootstrapServlet extends HttpServlet {
             }
 
         } catch (FileUploadException e) {
+            e.printStackTrace();
             request.setAttribute("errorMessage", "Unable to upload file!");
             request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(request, response);
         } catch (ZipException e) {
+            e.printStackTrace();
             request.setAttribute("errorMessage", "No zip file found!");
             request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(request, response);
         } catch (IOException e) {
+            e.printStackTrace();
             request.setAttribute("errorMessage", "IO Error");
             request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(request, response);
         } catch (Exception e) {
             // catch for file item.write() method
+            e.printStackTrace();
             request.setAttribute("errorMessage", "Exception Error");
             request.getRequestDispatcher("/WEB-INF/jsp/errorPage.jsp").forward(request, response);
         } finally {
